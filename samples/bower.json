@@ -1,0 +1,26 @@
+{
+  "name": "noticeable-widget-demo",
+  "authors": [
+    "Laurent Pellegrino <laurent.pellegrino@noticeable.io>"
+  ],
+  "description": "Noticeable.io Widget Demonstration",
+  "license": "Copyright © 2017 Noticeable.io",
+  "homepage": "https://demo.noticeable.io",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "libs",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "noticeable-widget": "/home/lpellegr/Projects/noticeable/noticeable-widget/.git",
+    "polymer": "Polymer/polymer#^2.1.0"
+  },
+  "devDependencies": {
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.11"
+  }
+}

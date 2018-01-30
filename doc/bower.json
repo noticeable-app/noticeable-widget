@@ -1,0 +1,24 @@
+{
+  "name": "noticeable-widget-documentation",
+  "authors": [
+    "Laurent Pellegrino <laurent.pellegrino@noticeable.io>"
+  ],
+  "description": "Noticeable.io Widget Demonstration",
+  "license": "Copyright © 2017 Noticeable.io",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "libs",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.1.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "^3.0.1",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.11"
+  }
+}

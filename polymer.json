@@ -1,0 +1,25 @@
+{
+  "entrypoint": "noticeable-widget.html",
+  "shell": "noticeable-widget.html",
+  "builds": [
+    {
+      "preset": "es5-bundled",
+      "addPushManifest": false,
+      "addServiceWorker": false,
+      "insertPrefetchLinks": false
+    }
+  ],
+  "main": "noticeable-widget.html",
+  "sources": [
+    "bower.json",
+    "noticeable-*.html"
+  ],
+  "extraDependencies": [
+    "bower_components/webcomponentsjs/*.js"
+  ],
+  "lint": {
+    "rules": [
+      "polymer-2"
+    ]
+  }
+}

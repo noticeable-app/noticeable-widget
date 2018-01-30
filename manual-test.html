@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>Noticeable - Manual Test</title>
+
+    <script src="components/webcomponentsjs/webcomponents-loader.js" async></script>
+    <link rel="import" href="components/noticeable-widget/noticeable-widget.html" async>
+
+    <custom-style>
+        <style type="text/css">
+            body {
+                font-family: 'Roboto', 'Noto', sans-serif;
+                font-size: 16px;
+            }
+
+            .center {
+                left: 50%;
+                position: absolute;
+                top: 50%;
+            }
+
+            a {
+                color: black;
+            }
+
+            noticeable-widget {
+                margin-left: 8px;
+
+                --noticeable-widget-trigger-badge: {
+                    margin-left: 8px;
+                };
+            }
+
+            noticeable-widget a:hover {
+                color: blue;
+            }
+        </style>
+    </custom-style>
+</head>
+<body>
+<script type="text/javascript">
+    function onVisible(event) {
+        console.log('Widget visible', event);
+        event.target.dynamicAlign = false;
+    }
+
+    this.addEventListener('noticeable-widget-visible', e => this.onVisible(e));
+</script>
+<div class="center">
+    <div style="display: flex; align-items: center; align-content: center; align-self: center;">
+        <noticeable-widget
+                id="custom-noticeable-widget"
+                access-token="T9rQanXroTVghgr5ZW2w" project-id="ZjycYsA3xUthOEnByko7"
+                no-cache
+              ><a href="#">What's new</a></noticeable-widget>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "author": "Laurent Pellegrino",
+  "bugs": {
+    "url": "https://github.com/lpellegr/noticeable-widget/issues"
+  },
+  "description": "noticeable-widget",
+  "devDependencies": {
+    "bower": "^1.8.2",
+    "firebase-tools": "^3.11.0",
+    "polymer-cli": "^1.5.4",
+    "rimraf": "^2.6.1"
+  },
+  "homepage": "https://github.com/lpellegr/noticeable-widget#readme",
+  "license": "UNLICENSED",
+  "name": "noticeable-widget",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lpellegr/noticeable-widget.git"
+  },
+  "scripts": {
+    "clean": "rm -rf build/ public/v1/",
+    "build": "yarn run samples && yarn run doc && bower update && yarn run clean && polymer build",
+    "samples": "rm -rf samples/build && cd samples && yarn build",
+    "doc-analysis": "rm -rf doc/analysis.json && polymer analyze --input noticeable-widget.html > doc/analysis.json",
+    "doc": "yarn run doc-analysis && rm -rf doc/build && cd doc && yarn run build",
+    "package": "yarn run build && mkdir -p public/v1/{samples,doc} && touch public/index.html && touch public/404.html && cp -r build/es5-bundled/* public/v1/ && mv public/v1/bower_components public/v1/libs && mkdir -p public/v1/libs/noticeable-widget && mv public/v1/*.html public/v1/libs/noticeable-widget && cp -r samples/build/es5-bundled/* public/v1/samples && cp -r doc/build/es5-bundled/* public/v1/doc",
+    "deploy": "yarn run package && firebase deploy"
+  },
+  "version": "1.0.0"
+}

@@ -1,0 +1,1622 @@
+<!--
+@license
+Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../iron-dropdown/iron-dropdown.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="noticeable-widget-icons.html">
+<link rel="import" href="noticeable-widget-label.html">
+<link rel="import" href="noticeable-widget-sliding-pages.html">
+<link rel="import" href="x-tinycolor.html">
+<link rel="import" href="x-twemoji.html">
+<link rel="import" href="x-voca.html">
+
+<dom-module id="noticeable-widget">
+    <template>
+        <style>
+            [hidden] {
+                display: none !important;
+            }
+
+            :host {
+                font-size: 15px;
+            }
+
+            noticeable-widget-label {
+                margin-right: 4px;
+
+                @apply --noticeable-widget-label;
+            }
+
+            noticeable-widget-sliding-pages {
+                contain: content;
+
+                @apply --noticeable-widget-sliding-pages;
+            }
+
+            #popup-container {
+                background-color: white;
+                border: 1px solid #e5e5e5;
+                border-radius: 4px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
+                color: #424242;
+                line-height: 1.26em;
+                overflow-y: hidden;
+                padding: 0;
+                width: 400px;
+                z-index: 99999;
+
+                @apply --noticeable-widget-popup-container;
+            }
+
+            #trigger {
+                cursor: pointer;
+                display: inline-block;
+
+                @apply --noticeable-widget-trigger;
+            }
+
+            #trigger-badge {
+                display: inline-block;
+
+                @apply --noticeable-widget-trigger-badge;
+            }
+
+            #trigger-badge-counter {
+                font-size: 11px;
+                font-weight: bold;
+                text-align: center;
+                text-rendering: optimizeLegibility;
+                -webkit-font-smoothing: antialiased;
+
+                @apply --noticeable-widget-trigger-badge-counter;
+            }
+
+            .emoji {
+                height: 1em;
+                width: 1em;
+                margin: 0 .05em 0 .1em;
+                vertical-align: -0.1em;
+
+                @apply --noticeable-widget-emoji;
+            }
+
+            .eye-catching {
+                animation: eye-catching-shake 2.6s infinite;
+
+                @apply --noticeable-widget-trigger-eye-catching;
+            }
+
+            .eye-catching:hover {
+                animation: none;
+
+                @apply --noticeable-widget-trigger-eye-catching-hover;
+            }
+
+            @keyframes eye-catching-pulse {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(209, 14, 0, 0);
+                }
+                40% {
+                    box-shadow: 0 0 0 5px rgba(224, 22, 29, 0.3);
+                }
+            }
+
+            @keyframes eye-catching-shake {
+                4%, 20% {
+                    transform: translate3d(-1px, -10px, 0);
+                }
+                8%, 32% {
+                    transform: translate3d(2px, 0, 0);
+                }
+                12%, 20%, 28% {
+                    transform: translate3d(-3px, 0, 0);
+                }
+                16%, 24% {
+                    transform: translate3d(2px, 0, 0);
+                }
+                32% {
+                    transform: translate3d(0, 0, 0);
+                }
+            }
+
+            .labels {
+                display: inline-flex;
+                margin-right: 4px;
+
+                @apply --noticeable-widget-popup-entry-labels;
+            }
+
+            .popup-content {
+                max-height: 290px;
+                overflow-y: auto;
+
+                @apply --noticeable-widget-popup-content;
+            }
+
+            .popup-footer {
+                border-top: 1px solid #e5e5e5;
+                color: #999;
+                font-size: 92%;
+                padding: 12px 16px;
+                text-align: center;
+
+                @apply --noticeable-widget-popup-footer;
+            }
+
+            .popup-footer a {
+                color: #999;
+                text-decoration: underline;
+
+                @apply --noticeable-widget-popup-footer-a;
+            }
+
+            .popup-footer a:hover {
+                text-decoration: none;
+
+                @apply --noticeable-widget-popup-footer-a-hover;
+            }
+
+            .popup-footer a:visited {
+                @apply --noticeable-widget-popup-footer-a-visited;
+            }
+
+            .popup-header {
+                border-bottom: 1px solid #e5e5e5;
+                font-weight: bold;
+                padding: 16px;
+                text-align: center;
+
+                @apply --noticeable-widget-popup-header;
+            }
+
+            .popup-header a {
+                color: inherit;
+                text-decoration: none;
+
+                @apply --noticeable-widget-popup-header-a;
+            }
+
+            .popup-header a:hover {
+                @apply --noticeable-widget-popup-header-a-hover;
+            }
+
+            .popup-header a:visited {
+                @apply --noticeable-widget-popup-header-a-visited;
+            }
+
+            .popup-entry {
+                border-bottom: 1px solid #e5e5e5;
+                cursor: pointer;
+                padding: 16px 12px;
+
+                @apply --noticeable-widget-popup-entry;
+            }
+
+            .popup-entry:hover {
+                background-color: #f1f1f1;
+
+                @apply --noticeable-widget-popup-entry-hover;
+            }
+
+            .popup-entry:last-of-type {
+                border: 0;
+                @apply --noticeable-widget-popup-entry-last-of-type;
+            }
+
+            .popup-entry-read {
+                @apply --noticeable-widget-popup-entry-read;
+            }
+
+            .popup-entry-read:hover {
+                @apply --noticeable-widget-popup-entry-read-hover;
+            }
+
+            .popup-entry .title {
+                font-weight: bold;
+                margin-right: 2px;
+                word-wrap: break-word;
+
+                @apply --noticeable-widget-popup-entry-title;
+            }
+
+            .popup-entry .excerpt {
+                color: #666;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                word-wrap: break-word;
+
+                @apply --noticeable-widget-popup-entry-excerpt;
+            }
+
+            .post-content {
+                line-height: 1.35em;
+                max-height: 350px;
+                overflow-y: auto;
+                padding: 1px 16px;
+                word-wrap: break-word;
+
+                @apply --noticeable-widget-popup-post-content;
+            }
+
+            .post-content-value {
+                @apply --noticeable-widget-popup-post-content-value;
+            }
+
+            .post-content a {
+                color: var(--post-content-link-color, #1f55ff);
+                text-decoration: underline;
+
+                @apply --noticeable-widget-popup-post-content-a;
+            }
+
+            .post-content a:hover {
+                text-decoration: none;
+
+                @apply --noticeable-widget-popup-post-content-a-hover;
+            }
+
+            .post-content img {
+                max-width: 100%;
+
+                @apply --noticeable-widget-popup-post-content-img;
+            }
+
+            .post-content-footer {
+                border: 1px solid #e5e5e5;
+                border-radius: 4px;
+                display: inline-block;
+                margin-bottom: 15px;
+                margin-top: 8px;
+                padding: 8px 12px;
+
+                @apply --noticeable-widget-popup-post-content-footer;
+            }
+
+            .post-content-footer:hover {
+                background-color: #f1f1f1;
+
+                @apply --noticeable-widget-popup-post-content-footer-hover;
+            }
+
+            .post-content-footer a {
+                color: #999;
+                text-decoration: none;
+
+                @apply --noticeable-widget-popup-post-content-footer-a;
+            }
+
+            .post-content-footer a:hover {
+                @apply --noticeable-widget-popup-post-content-footer-a-hover;
+            }
+
+            .post-content-footer a:visited {
+                @apply --noticeable-widget-popup-post-content-footer-a-visited;
+            }
+
+            .post-header {
+                border-bottom: 1px solid #e5e5e5;
+                font-weight: bold;
+                position: relative;
+                text-align: center;
+
+                @apply --noticeable-widget-popup-post-header;
+            }
+
+            .post-header a {
+                color: inherit;
+                text-decoration: none;
+
+                @apply --noticeable-widget-popup-post-header-a;
+            }
+
+            .post-header a:hover {
+                @apply --noticeable-widget-popup-post-header-a-hover;
+            }
+
+            .post-header a:visited {
+                @apply --noticeable-widget-popup-post-header-a-visited;
+            }
+
+            .post-header-back {
+                left: 8px;
+                position: absolute;
+                top: 4px;
+
+                @apply --noticeable-widget-popup-post-header-back;
+            }
+
+            .post-header-title {
+                font-weight: bold;
+                padding: 16px 48px 16px 56px;
+                overflow: hidden;
+                text-align: center;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+
+                @apply --noticeable-widget-post-header-title;
+            }
+
+            .powered-by:before {
+                content: ' ';
+            }
+
+            .trigger-badge-disabled {
+                background-color: #d3d3d3;
+                border-radius: 50%;
+                color: white;
+                cursor: pointer;
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                height: 9.9px;
+                text-align: center;
+                text-decoration: none;
+                transform: matrix(1, 0, 0, 1, 0, 0);
+                transition-delay: 0s;
+                transition-duration: 0.4s;
+                transition-property: all;
+                transition-timing-function: ease;
+                user-select: none;
+                width: 9.9px;
+
+                @apply --noticeable-widget-trigger-badge-disabled;
+            }
+
+            .trigger-badge-enabled {
+                align-content: center;
+                background-color: #e0161d;
+                border-radius: 50%;
+                color: white;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                height: 16px;
+                line-height: 16px;
+                justify-content: center;
+                text-align: center;
+                text-decoration: none;
+                transform: matrix(1, 0, 0, 1, 0, 0);
+                transition-delay: 0s;
+                transition-duration: 0.4s;
+                transition-property: all;
+                transition-timing-function: ease;
+                user-select: none;
+                vertical-align: middle;
+                width: 16px;
+
+                @apply --noticeable-widget-trigger-badge-enabled;
+            }
+
+            /** Markdown related styles */
+
+            /*
+
+            Atom One Light by Daniel Gamage
+            Original One Light Syntax theme from https://github.com/atom/one-light-syntax
+
+            base:    #fafafa
+            mono-1:  #383a42
+            mono-2:  #686b77
+            mono-3:  #a0a1a7
+            hue-1:   #0184bb
+            hue-2:   #4078f2
+            hue-3:   #a626a4
+            hue-4:   #50a14f
+            hue-5:   #e45649
+            hue-5-2: #c91243
+            hue-6:   #986801
+            hue-6-2: #c18401
+
+            */
+
+            .hljs {
+                background: #fafafa;
+                border-radius: 2px;
+                color: #383a42;
+                display: block;
+                font-size: 14px;
+                overflow-x: auto;
+                padding: 1em;
+            }
+
+            .hljs-comment,
+            .hljs-quote {
+                color: #a0a1a7;
+                font-style: italic;
+            }
+
+            .hljs-doctag,
+            .hljs-keyword,
+            .hljs-formula {
+                color: #a626a4;
+            }
+
+            .hljs-section,
+            .hljs-name,
+            .hljs-selector-tag,
+            .hljs-deletion,
+            .hljs-subst {
+                color: #e45649;
+            }
+
+            .hljs-literal {
+                color: #0184bb;
+            }
+
+            .hljs-string,
+            .hljs-regexp,
+            .hljs-addition,
+            .hljs-attribute,
+            .hljs-meta-string {
+                color: #50a14f;
+            }
+
+            .hljs-built_in,
+            .hljs-class .hljs-title {
+                color: #c18401;
+            }
+
+            .hljs-attr,
+            .hljs-variable,
+            .hljs-template-variable,
+            .hljs-type,
+            .hljs-selector-class,
+            .hljs-selector-attr,
+            .hljs-selector-pseudo,
+            .hljs-number {
+                color: #986801;
+            }
+
+            .hljs-symbol,
+            .hljs-bullet,
+            .hljs-link,
+            .hljs-meta,
+            .hljs-selector-id,
+            .hljs-title {
+                color: #4078f2;
+            }
+
+            .hljs-emphasis {
+                font-style: italic;
+            }
+
+            .hljs-strong {
+                font-weight: bold;
+            }
+
+            .hljs-link {
+                text-decoration: underline;
+            }
+
+            blockquote {
+                border-left: 3px solid #f1f1f1;
+                color: #4d4d4d91;
+                margin: 0;
+                padding: 2px 16px;
+            }
+
+            code {
+                background: #fafafa;
+                border-radius: 2px;
+                color: #383a42;
+                font-size: 14px;
+                padding: 0.5em;
+            }
+
+            li {
+                line-height: 26px;
+            }
+
+            table {
+                border-collapse: collapse;
+                border-spacing: 0;
+                width: 100%;
+            }
+
+            table td {
+                line-height: 48px;
+                border-bottom: 2px solid #f1f1f1;
+            }
+
+            table th {
+                line-height: 42px;
+                border-bottom: 2px solid #f1f1f1;
+            }
+
+        </style>
+
+        <iron-ajax
+                id="xhr-data"
+                content-type="application/json"
+                handle-as="json"
+                headers$='{"Authorization": "Apikey [[accessToken]]"}'
+                on-error="_handleDataError"
+                on-response="_handleDataResponse"
+                params$='{"query":"{ project(id:\"[[projectId]]\") { accentColor posts(before: \"now\" isDraft: false last:9) { edges { node { content { html } excerpt id labels { color name } publicationTime slug title } } } timeline { customDomain { name verified } } widget { closeOnEscKey closeOnOutsideClick fetchLimit markAsSeenAfter opened popup { allowOutsideScroll footer header horizontalAlign horizontalOffset useDynamicAlign verticalAlign verticalOffset withBackdrop } postContentFooter postExcerptMaxLength postExcerptTarget trigger { displayAfter displayCounter useEyeCatching useSoftHide } useWhiteLabel } } }"}'
+                url="[[apiUrl]]"></iron-ajax>
+
+        <div id="trigger"
+             hidden="[[!_showTrigger(_dataLoaded, _unSeenPostCount, triggerSoftHide)]]"
+             on-tap="toggle"
+             slot="dropdown-trigger">
+            <slot></slot>
+            <slot name="badge">
+                <div id="trigger-badge" class="trigger-badge-disabled">
+                    <div id="trigger-badge-counter"
+                         hidden="[[!_showBadgeCounter(triggerDisplayCounter, _unSeenPostCount)]]">
+                        [[_unSeenPostCount]]
+                    </div>
+                </div>
+            </slot>
+        </div>
+
+        <iron-dropdown id="popup"
+                       allow-outside-scroll="[[popupOutsideScroll]]"
+                       dynamic-align="[[popupDynamicAlign]]"
+                       horizontal-align="[[popupHorizontalAlign]]"
+                       horizontal-offset="[[popupHorizontalOffset]]"
+                       no-cancel-on-esc-key="[[!closeOnEscKey]]"
+                       no-cancel-on-outside-click="[[!closeOnOutsideClick]]"
+                       no-overlap
+                       on-iron-overlay-closed="_onPopupClosed"
+                       on-iron-overlay-opened="_onPopupOpened"
+                       opened="{{opened}}"
+                       vertical-align="[[popupVerticalAlign]]"
+                       vertical-offset="[[popupVerticalOffset]]"
+                       with-backdrop="[[popupBackdrop]]">
+
+            <div id="popup-container" hidden="[[!_dataLoaded]]" slot="dropdown-content">
+                <noticeable-widget-sliding-pages id="sliding-pages" on-page-change="_onPageChange">
+                    <div>
+                        <template is="dom-if" if="[[popupHeader]]">
+                            <div class="popup-header">
+                                <a href="[[_timelineUrl]]/" target="noticeable-timeline"
+                                   title="[[popupHeader]]">[[popupHeader]]</a>
+                            </div>
+                        </template>
+                        <div class="popup-content">
+                            <template is="dom-repeat" items="[[_postData]]">
+                                <div class$="popup-entry [[_getPostReadClass(item.id)]]" id$="[[item.id]]"
+                                     on-tap="_openPost">
+                                    <div class="labels">
+                                        <template is="dom-repeat" items="[[item.labels]]" as="label">
+                                            <noticeable-widget-label color="[[label.color]]"
+                                                                     name="[[label.name]]"></noticeable-widget-label>
+                                        </template>
+                                    </div><!-- This comment prevents the insertion of a space upon formatting --><span
+                                        class="title" inner-h-t-m-l="[[item.title]]"></span>
+                                    <span class="excerpt"
+                                          inner-h-t-m-l="[[item.excerpt]]"></span>
+                                </div>
+                            </template>
+                        </div>
+                        <template is="dom-if" if="[[popupFooter]]">
+                            <div class="popup-footer">
+                                <div>
+                                    <a href="[[_timelineUrl]]/" target="noticeable-timeline"
+                                       title="[[popupFooter]]">[[popupFooter]]</a>
+                                    <template is="dom-if" if="[[!whiteLabel]]">
+                                        <span class="powered-by">
+                                            powered by <a href="https://noticeable.io"
+                                                          target="_blank"
+                                                          title="Noticeable - Make your updates visible.">Noticeable</a>
+                                        </span>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div>
+                        <div class="post-header">
+                            <a href="[[_timelineUrl]]/posts/[[_post.slug]]"
+                               target="noticeable-post"
+                               title="[[_post.rawTitle]]">
+                                <div class="post-header-title" inner-h-t-m-l="[[_post.title]]"></div>
+                            </a>
+                            <div class="post-header-back">
+                                <paper-icon-button icon="noticeable-widget:arrow-back"
+                                                   on-tap="_showPosts"></paper-icon-button>
+                            </div>
+                        </div>
+
+                        <div class="post-content">
+                            <div class="post-content-value" inner-h-t-m-l="[[_post.content]]"></div>
+
+                            <template is="dom-if" if="[[postContentFooter]]">
+                                <div class="post-content-footer">
+                                    <a href="[[_timelineUrl]]/posts/[[_post.slug]]"
+                                       target="noticeable-post"
+                                       title="[[postContentFooter]]">[[postContentFooter]]</a>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </noticeable-widget-sliding-pages>
+            </div>
+        </iron-dropdown>
+
+    </template>
+
+    <script>
+        Polymer.setPassiveTouchGestures(true);
+
+        const POST_SAMPLES = [
+            {
+                node: {
+                    content: {
+                        html: "<p>Today we're are thrilled to introduce our product timeline. The purpose of this timeline is to keep you informed about updates and changes we are continuously pushing to <em>Acme</em>. This includes new features, improvements, fixes but also scheduled maintenances.</p>\n<p>We work on <em>Acme</em> all the time and your satisfaction is our main metric for success. However, sometimes, it may seem that not much is happening. We know that communication is important and this new timeline is here to strengthen that very important part.</p>\n<p>You'll notice updates while browsing our <a href=\"https://acme.noticeable.io\">service webpage</a> through a widget that appears at the right time. Besides, all thing's we've changed is centralized on our <a href=\"https://acme.noticeable.io\">timeline</a>. You can also <a href=\"https://acme.noticeable.io/subscribe\">subscribe</a> to receive updates right to your inbox.</p>\n"
+                    },
+                    excerpt: "Today we're are thrilled to introduce our product timeline. The purpose of this timeline is to keep you informed about updates and changes we are continuously pushing to Acme. This includes new features, improvements, fixes but also...",
+                    id: "example1",
+                    labels: [{"color": "#6b6cf3", "name": "Announcement"}],
+                    slug: "we-are-starting-a-changelog",
+                    title: "We are starting a changelog 📣"
+                }
+            },
+            {
+                node: {
+                    content: {
+                        html: "<p>Markdown is an intuitive and human-readable syntax. You can use it to format your posts. Below is a series of syntax examples:</p>\n<h2>Headings</h2>\n<pre><code class=\"hljs language-markdown\"><span class=\"hljs-section\"># h1 Heading</span>\n<span class=\"hljs-section\">## h2 Heading</span>\n<span class=\"hljs-section\">### h3 Heading</span>\n<span class=\"hljs-section\">#### h4 Heading</span>\n<span class=\"hljs-section\">##### h5 Heading</span>\n<span class=\"hljs-section\">###### h6 Heading</span>\n</code></pre>\n<h2>Emphasis</h2>\n<pre><code class=\"hljs language-markdown\"><span class=\"hljs-strong\">**This is bold text**</span>\n\n<span class=\"hljs-strong\">__This is bold text__</span>\n\n<span class=\"hljs-emphasis\">*This is italic text*</span>\n\n<span class=\"hljs-emphasis\">_This is italic text_</span>\n\n~~Deleted text~~\n\nSuperscript: 19^th^\n\nSubscript: H~2~O\n\n++Inserted text++\n\n==Marked text==\n</code></pre>\n<h2>Blockquotes</h2>\n<pre><code class=\"hljs language-markdown\"><span class=\"hljs-quote\">&gt; Blockquotes can also be nested...</span>\n&gt;&gt; ...by using additional greater-than signs right next to each other...\n<span class=\"hljs-quote\">&gt; &gt; &gt; ...or with spaces between arrows.</span>\n</code></pre>\n<h2>Lists</h2>\n<p>Unordered:</p>\n<pre><code class=\"hljs language-markdown\"><span class=\"hljs-bullet\">+ </span>Create a list by starting a line with <span class=\"hljs-code\">`+`</span>, <span class=\"hljs-code\">`-`</span>, or <span class=\"hljs-code\">`*`</span>\n<span class=\"hljs-bullet\">+ </span>Sub-lists are made by indenting 2 spaces:\n  - Marker character change forces new list start:\n<span class=\"hljs-code\">    * Ac tristique libero volutpat at</span>\n<span class=\"hljs-code\">    + Facilisis in pretium nisl aliquet</span>\n<span class=\"hljs-code\">    - Nulla volutpat aliquam velit</span>\n<span class=\"hljs-bullet\">+ </span>Very easy!\n</code></pre>\n<p>Ordered:</p>\n<pre><code class=\"hljs language-markdown\"><span class=\"hljs-bullet\">1. </span>Lorem ipsum dolor sit amet\n<span class=\"hljs-bullet\">2. </span>Consectetur adipiscing elit\n<span class=\"hljs-bullet\">3. </span>Integer molestie lorem at massa\n</code></pre>\n<pre><code class=\"hljs language-markdown\"><span class=\"hljs-bullet\">1. </span>You can use sequential numbers...\n<span class=\"hljs-bullet\">1. </span>...or keep all the numbers as <span class=\"hljs-code\">`1.`</span>\n</code></pre>\n<p>Start numbering with offset:</p>\n<pre><code class=\"hljs language-markdown\"><span class=\"hljs-bullet\">57. </span>foo\n<span class=\"hljs-bullet\">1. </span>bar\n</code></pre>\n<h2>Code</h2>\n<p>Inline code:</p>\n<pre><code class=\"hljs language-markdown\">Here is an expression <span class=\"hljs-code\">`2 + 3`</span>\n</code></pre>\n<p>Syntax highlighting:</p>\n<pre><code class=\"hljs language-markdown\"><span class=\"hljs-code\">```js\nvar foo = function (bar) {\n  return bar++;\n};\n\nconsole.log(foo(5));\n</span></code></pre>\n<pre><code></code></pre>\n<h2>Tables</h2>\n<pre><code class=\"hljs language-markdown\">| Planet Name | Diameter (km) |\n| ----------- | ------------- |\n| Mercury | 4,879 |\n| Venus | 12,104 |\n| Earth | 12,756 |\n| Mars | 6,792 |\n</code></pre>\n<h2>Links</h2>\n<pre><code class=\"hljs language-markdown\">[<span class=\"hljs-string\">Noticeable</span>](<span class=\"hljs-link\">https://noticeable.io</span>)\n</code></pre>\n<pre><code class=\"hljs language-markdown\">Auto-converted link https://noticeable.io.\n</code></pre>\n<h2>Medias</h2>\n<h3>Images</h3>\n<pre><code class=\"hljs language-markdown\">![<span class=\"hljs-string\">Balloons</span>](<span class=\"hljs-link\">https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&amp;fit=crop&amp;w=934&amp;q=80</span>)\n</code></pre>\n<h3>Videos</h3>\n<p>YouTube, Videopress, Vimeo or Vine videos can be embedded using the same syntax as Images or auto-converted links:</p>\n<pre><code class=\"hljs language-markdown\">[<span class=\"hljs-string\">Vista</span>](<span class=\"hljs-link\">https://vimeo.com/152839850</span>)\n[<span class=\"hljs-string\">What About Us Piano Cover</span>](<span class=\"hljs-link\">https://youtu.be/zzpnNqqXLEI?list=RDzzpnNqqXLEI</span>)\n\nhttps://vimeo.com/152839850\nhttps://youtu.be/zzpnNqqXLEI?list=RDzzpnNqqXLEI\n</code></pre>\n"
+                    },
+                    excerpt: "Markdown is an intuitive and human-readable syntax. You can use it to format your posts. Below is a series of syntax examples:  Headings  h1 Heading h2 Heading h3 Heading h4 Heading h5 Heading h6 Heading  Emphasis  This is bold text...",
+                    id: "example2",
+                    labels: [{"color": "#f3322f", "name": "New feature"}],
+                    slug: "formatting-posts-with-markdown",
+                    title: "Formatting posts with Markdown 🎨"
+                }
+            },
+            {
+                node: {
+                    content: {
+                        html: "<p>You may have already read the quote &quot;Ideas are commodity. Execution of them is not&quot;. What is most frustrating than spending time and money building awesome features that only part of your audience discovers?</p>\n<p><img src=\"https://media.giphy.com/media/7G5YcR8vFyXcc/giphy.gif\" alt=\"Boosting customer retention\"></p>\n<p>Improving engagement but also customer retention requires to keep customers involved in your continuous flow of innovation. Noticeable is designed to this aim: keeping your customers up-to-date so that they know how hard your team is working on getting them satisfied.</p>\n"
+                    },
+                    excerpt: "You may have already read the quote \"Ideas are commodity. Execution of them is not\". What is most frustrating than spending time and money building awesome features that only part of your audience discovers?  Improving engagement but...",
+                    id: "example3",
+                    labels: [{"color": "#039be5", "name": "Marketing"}, {"color": "#fdd835", "name": "Tips"}],
+                    slug: "increasing-user-retention",
+                    title: "Increasing customer retention 🚀"
+                }
+            }
+        ];
+
+        /**
+         * This [custom element](https://developers.google.com/web/fundamentals/web-components/customelements) is
+         * provided by [Noticeable](https://noticeable.io) to make product updates visible and increase user retention.
+         *
+         * It's important to remember that using `<noticeable-widget>` is no different than using a `<div>` or any
+         * other element once dependencies have been imported. For setup instructions, please look at your
+         * [project settings](https://noticeable.io/projects).
+         *
+         * The inner of this element is made of 2 parts: a trigger and a popup. The trigger includes by default a badge
+         * with a counter that depicts the number of new posts which have not yet been seen. Upon tap, the trigger opens
+         * a popup that displays the most recent posts published, from the [Noticeable](https://noticeable.io) service.
+         *
+         * In order to configure camel-case properties of elements using attributes, dash-case must be used in the
+         * attribute name of the element. Please also note local definitions have precedence over remote settings
+         * defined in the Noticeable service.
+         *
+         * You can find customization examples on our [samples](https://widget.noticeable.io/v1/samples/) page.
+         *
+         * If you any questions, concerns or suggestions, please reach us to
+         * [support@noticeable.io](mailto:support@noticeable.io).
+         *
+         * ### Styling
+         *
+         * `<noticeable-widget>` provides the following
+         * [mixins](https://www.polymer-project.org/2.0/docs/devguide/custom-css-properties#use-custom-css-mixins)
+         * for styling:
+         *
+         * Mixin           | Description (relative to the widget internals)
+         * ----------------|-------------
+         * --noticeable-widget-emoji | Mixin applied to selector `.emoji`.
+         * --noticeable-widget-label | Mixin applied to all instances of `noticeable-widget-label` element.
+         * --noticeable-widget-popup-container | Mixin applied to selector `#popup-container`.
+         * --noticeable-widget-popup-content | Mixin applied to selector `.popup-content`.
+         * --noticeable-widget-popup-entry-labels | Mixin applied to selector `.labels`.
+         * --noticeable-widget-popup-entry | Mixin applied to selector `.popup-entry`.
+         * --noticeable-widget-popup-entry-hover | Mixin applied to selector `.popup-entry:hover`.
+         * --noticeable-widget-popup-entry-last-of-type | Mixin applied to selector `.popup-entry:last-of-type`.
+         * --noticeable-widget-popup-entry-read | Mixin applied to selector `.popup-entry-read`.
+         * --noticeable-widget-popup-entry-read-hover | Mixin applied to selector `.popup-entry-read:hover`.
+         * --noticeable-widget-popup-entry-excerpt | Mixin applied to selector `.popup-entry .excerpt`.
+         * --noticeable-widget-popup-entry-title | Mixin applied to selector `.popup-entry .title`.
+         * --noticeable-widget-popup-footer | Mixin applied to selector `.popup-footer`.
+         * --noticeable-widget-popup-footer-a | Mixin applied to selector `.popup-footer a`.
+         * --noticeable-widget-popup-footer-a-hover | Mixin applied to selector `.popup-footer a:hover`.
+         * --noticeable-widget-popup-footer-a-visited | Mixin applied to selector `.popup-footer a:visited`.
+         * --noticeable-widget-popup-header | Mixin applied to selector `.popup-header`.
+         * --noticeable-widget-popup-header-a | Mixin applied to selector `.popup-header a`.
+         * --noticeable-widget-popup-header-a-hover | Mixin applied to selector `.popup-header a:hover`.
+         * --noticeable-widget-popup-header-a-visited | Mixin applied to selector `.popup-header a:visited`.
+         * --noticeable-widget-popup-post-content | Mixin applied to selector `.post-content`.
+         * --noticeable-widget-popup-post-content-value | Mixin applied to selector `.post-content-value`.
+         * --noticeable-widget-popup-post-content-a | Mixin applied to selector `.post-content a`.
+         * --noticeable-widget-popup-post-content-a-hover | Mixin applied to selector `.post-content a:hover`.
+         * --noticeable-widget-popup-post-content-footer | Mixin applied to selector `.post-content-footer`.
+         * --noticeable-widget-popup-post-content-footer-hover | Mixin applied to selector `.post-content-footer:hover`.
+         * --noticeable-widget-popup-post-content-footer-a | Mixin applied to selector `.post-content-footer a`.
+         * --noticeable-widget-popup-post-content-footer-a-hover | Mixin applied to selector `.post-content-footer a:hover`.
+         * --noticeable-widget-popup-post-content-footer-a-visited | Mixin applied to selector `.post-content-footer a:visited`.
+         * --noticeable-widget-popup-post-content-img | Mixin applied to selector `.post-content img`.
+         * --noticeable-widget-popup-post-header | Mixin applied to selector `.post-header`.
+         * --noticeable-widget-popup-post-header-a | Mixin applied to selector `.post-header a`.
+         * --noticeable-widget-popup-post-header-a-hover | Mixin applied to selector `.post-header a:hover`.
+         * --noticeable-widget-popup-post-header-a-visited | Mixin applied to selector `.post-header a:visited`.
+         * --noticeable-widget-popup-post-header-back | Mixin applied to selector `.post-header-back`.
+         * --noticeable-widget-post-header-title | Mixin applied to selector `.post-header-title`.
+         * --noticeable-widget-sliding-pages | Mixin applied to selector `noticeable-widget-sliding-pages`.
+         * --noticeable-widget-trigger | Mixin applied to selector `#trigger`.
+         * --noticeable-widget-trigger-badge | Mixin applied to selector `#trigger-badge`.
+         * --noticeable-widget-trigger-badge-counter | Mixin applied to selector `#trigger-badge-counter`.
+         * --noticeable-widget-trigger-badge-disabled | Mixin applied to selector `.trigger-badge-disabled`.
+         * --noticeable-widget-trigger-badge-enabled | Mixin applied to selector `trigger-badge-enabled`.
+         * --noticeable-widget-trigger-eye-catching | Mixin applied to selector `.eye-catching`.
+         * --noticeable-widget-trigger-eye-catching-hover | Mixin applied to selector `.eye-catching:hover`.
+         *
+         * @polymer
+         * @customElement
+         */
+        class NoticeableWidget extends Polymer.GestureEventListeners(Polymer.Element) {
+
+            static get is() {
+                return 'noticeable-widget';
+            }
+
+            static get observers() {
+                return [
+                    '_onParameterChange(accessToken, projectId)'
+                ]
+            }
+
+            static get properties() {
+                return {
+                    /**
+                     * The access token used to fetch data from the API.
+                     */
+                    accessToken: {
+                        type: String,
+                    },
+                    /**
+                     * The API URL used for fetching widget data.
+                     */
+                    apiUrl: {
+                        type: String,
+                        value: 'https://api.noticeable.io/graphql'
+                    },
+                    /**
+                     * Set to _true_ to disable closing the widget with the _ESC_ key.
+                     *
+                     * The default value is _true_.
+                     */
+                    closeOnEscKey: {
+                        type: Object,
+                        value: undefined
+                    },
+                    /**
+                     * Set to _true_ to disable closing the widget by clicking outside the popup.
+                     *
+                     * The default value is _true_.
+                     */
+                    closeOnOutsideClick: {
+                        type: Object,
+                        value: undefined
+                    },
+                    /**
+                     * The maximum number of entries to fetch. The value must be in the range _[1,9]_.
+                     *
+                     * The default value is _3_.
+                     */
+                    fetchLimit: {
+                        type: Number,
+                        value: undefined
+                    },
+                    /**
+                     * After the specified time (in ms), widget posts are automatically marked as
+                     * seen. A value lower than _0_ means the feature is disabled.
+                     *
+                     * The default value is _-1_.
+                     */
+                    markAsSeenAfter: {
+                        type: Number,
+                        value: undefined
+                    },
+                    /**
+                     * When enabled, all widget requests go straight to Noticeable servers bypassing caching layers.
+                     * This ensures data freshness at the cost of higher response times.
+                     *
+                     * The default value is _false_.
+                     */
+                    noCache: {
+                        type: Boolean,
+                        value: false
+                    },
+                    /**
+                     * Define whether the widget must appear opened by default.
+                     * The widget is considered opened if its popup is visible.
+                     *
+                     * The default value is _false_.
+                     */
+                    opened: {
+                        notify: true,
+                        type: Object,
+                        value: undefined
+                    },
+                    /**
+                     * Set to true to display a backdrop behind the popup when it is opened.
+                     *
+                     * Allowed values are _false_ or _true_. The default value is _false_.
+                     */
+                    popupBackdrop: {
+                        type: Object,
+                        value: undefined
+                    },
+                    /**
+                     * If _true_, it will use _popupHorizontalAlign_ and _popupVerticalAlign_ values as preferred
+                     * alignment and if there's not enough space, it will pick the values which minimize the cropping.
+                     *
+                     * The default value is _true_.
+                     */
+                    popupDynamicAlign: {
+                        type: Object,
+                        value: undefined
+                    },
+                    /**
+                     * The text to use as the popup footer description.
+                     * If empty, then no footer bar appears.
+                     *
+                     * The default value is _empty_.
+                     */
+                    popupFooter: {
+                        type: String,
+                        value: undefined
+                    },
+                    /**
+                     * The text to use as the popup title.
+                     * If empty, no header bar appears.
+                     *
+                     * The default value is _empty_.
+                     */
+                    popupHeader: {
+                        type: String,
+                        value: undefined
+                    },
+                    /**
+                     * The orientation against which to align the popup horizontally relative to the trigger.
+                     *
+                     * Allowed values are _center_, _left_ or _right_. The default value is _left_.
+                     */
+                    popupHorizontalAlign: {
+                        type: String,
+                        value: undefined
+                    },
+                    /**
+                     * A pixel value that will be added to the position calculated for the
+                     * given `popupHorizontalAlign`, in the direction of alignment. You can think
+                     * of it as increasing or decreasing the distance to the side of the
+                     * screen given by `popupHorizontalAlign`.
+                     *
+                     * If `popupHorizontalAlign` is "left", this offset will increase or decrease
+                     * the distance to the left side of the screen: a negative offset will
+                     * move the popup to the left; a positive one, to the right.
+                     *
+                     * Conversely if `popupHorizontalAlign` is "right", this offset will increase
+                     * or decrease the distance to the right side of the screen: a negative
+                     * offset will move the dropdown to the right; a positive one, to the left.
+                     *
+                     * The default value is _0_.
+                     */
+                    popupHorizontalOffset: {
+                        type: Number,
+                        value: undefined,
+                    },
+                    /**
+                     * By default, the popup will constrain scrolling on the page to itself when opened.
+                     * Set to _true_ in order to prevent scroll from being constrained to the popup when it opens.
+                     *
+                     * The default value is _false_.
+                     */
+                    popupOutsideScroll: {
+                        type: Object,
+                        value: undefined
+                    },
+                    /**
+                     * The orientation against which to align the popup vertically relative to the trigger.
+                     *
+                     * Allowed values are _bottom_ or _top_. The default value is _top_.
+                     */
+                    popupVerticalAlign: {
+                        type: String,
+                        value: undefined
+                    },
+                    /**
+                     * A pixel value that will be added to the position calculated for the
+                     * given `popupVerticalAlign`, in the direction of alignment. You can think
+                     * of it as increasing or decreasing the distance to the side of the
+                     * screen given by `popupVerticalAlign`.
+                     *
+                     * If `popupVerticalAlign` is "top", this offset will increase or decrease
+                     * the distance to the top side of the screen: a negative offset will
+                     * move the popup upwards; a positive one, downwards.
+                     *
+                     * Conversely if `popupVerticalAlign` is "bottom", this offset will increase
+                     * or decrease the distance to the bottom side of the screen: a negative
+                     * offset will move the dropdown downwards; a positive one, upwards.
+                     *
+                     * The default value is _10_.
+                     */
+                    popupVerticalOffset: {
+                        type: Number,
+                        value: undefined,
+                    },
+                    /**
+                     * The text to display at the bottom of a post content.
+                     * If not empty, clicking on the text opens the post on the timeline.
+                     * If empty, then nothing appears.
+                     *
+                     * The default value is _empty_.
+                     */
+                    postContentFooter: {
+                        type: String,
+                        value: undefined
+                    },
+                    /**
+                     * Defines the maximum number of characters for post summaries.
+                     *
+                     * Allowed values are between _0_ and _240_. The default value is _140_.
+                     */
+                    postExcerptMaxLength: {
+                        type: Object,
+                        value: undefined
+                    },
+                    /**
+                     * Defines where to open the content related to a post excerpt.
+                     *
+                     * Allowed values are _timeline_ or _widget_. The default value is _widget_.
+                     */
+                    postExcerptTarget: {
+                        type: Object,
+                        value: undefined
+                    },
+                    /**
+                     * The project ID used to fetch data from the API.
+                     */
+                    projectId: {
+                        type: String
+                    },
+                    /**
+                     * Considers local attribute definitions only when enabled.
+                     * Settings defined on the noticeable.io service are ignored.
+                     *
+                     * Allowed values are _false_ or _true_.
+                     */
+                    skipRemoteSettings: {
+                        type: Object,
+                        value: false
+                    },
+                    /**
+                     * Defines whether the trigger must include the number of posts which have not yet been seen.
+                     * This property makes sense only when the badge is visible.
+                     *
+                     * Allowed values are _false_ or _true_. The default value is _true_.
+                     */
+                    triggerDisplayCounter: {
+                        type: Object,
+                        value: undefined
+                    },
+                    /**
+                     * Delay to wait (in ms) before showing the trigger once widget data has been fetched.
+                     *
+                     * The default value is _0_.
+                     */
+                    triggerDisplayAfter: {
+                        type: Number,
+                        value: undefined
+                    },
+                    /**
+                     * When enabled, animates the trigger to increase its visibility and encourage people tapping on it.
+                     *
+                     * Allowed values are _false_ or _true_. The default value is _true_.
+                     */
+                    triggerEyeCatching: {
+                        type: Object,
+                        value: undefined
+                    },
+                    /**
+                     * When enabled, animates the trigger to encourage people tapping on it.
+                     *
+                     * This property cannot be defined remotely from noticeable.io. It is used in advanced
+                     * customization scenarios to select the inner element where the eye catching animation
+                     * must be applied.
+                     */
+                    triggerEyeCatchingTargetSelector: {
+                        type: String,
+                        value: '#trigger-badge'
+                    },
+                    /**
+                     * When enabled, prevents the trigger to be hidden even if all posts have been seen.
+                     *
+                     * Allowed values are _false_ or _true_. The default value is _true_.
+                     */
+                    triggerSoftHide: {
+                        type: Object,
+                        value: undefined
+                    },
+                    /**
+                     * When _true_, hide all _Noticeable_ branding from the widget.
+                     *
+                     * Allowed values are _false_ or _true_. The default value is _false_.
+                     */
+                    whiteLabel: {
+                        type: Object,
+                        value: undefined
+                    },
+
+
+                    _customDomain: {
+                        type: Object
+                    },
+                    _dataLoaded: {
+                        type: Boolean,
+                        value: false,
+                    },
+                    _newPostSeen: {
+                        type: Array
+                    },
+                    _post: {
+                        type: Object
+                    },
+                    _postData: {
+                        type: Object,
+                    },
+                    _postDataMap: {
+                        type: Object,
+                    },
+                    _projectSettings: {
+                        type: Object,
+                        value: undefined
+                    },
+                    _timelineUrl: {
+                        computed: '_computeTimelineUrl(_customDomain)',
+                        type: String
+                    },
+                    _unSeenPostCount: {
+                        observer: '_onUnSeenPostCountChange',
+                        type: Number,
+                        value: undefined
+                    },
+                }
+            }
+
+            /**
+             * Closes the popup, if opened.
+             */
+            close() {
+                this.$.popup.close();
+            }
+
+            /**
+             * Injects a CSS definition as a new child element of the shadow root.
+             */
+            injectCSS(def) {
+                const style = document.createElement('style');
+                style.type = 'text/css';
+                style.innerHTML = def;
+                this.shadowRoot.appendChild(style);
+            }
+
+            /**
+             * Opens the popup, if closed.
+             */
+            open() {
+                this.$.popup.open();
+            }
+
+            /**
+             * Toggles the opened state of the popup: opens it if closed or closes it if opened.
+             */
+            toggle() {
+                if (!this.opened) {
+                    this.$.popup.open();
+                } else {
+                    this.$.popup.close();
+                }
+            }
+
+            _checkFetchLimitValue() {
+                if (this.fetchLimit < 1) {
+                    console.warn(
+                        "The value for the attribute 'fetch-limit' must be in range [1,9] but it contains "
+                        + this.fetchLimit + ", the value has been forced to 1.");
+
+                    this.fetchLimit = 1;
+                }
+
+                if (this.fetchLimit > 9) {
+                    console.warn(
+                        "The value for the attribute 'fetch-limit' must be in range [1,9] but it contains "
+                        + this.fetchLimit + ", the value has been forced to 9.");
+
+                    this.fetchLimit = 9;
+                }
+            }
+
+            _computeTriggerState(posts) {
+                let postIdAlreadySeen = this._getLocalStorageItem('posts:seen');
+
+                if (!postIdAlreadySeen) {
+                    postIdAlreadySeen = [];
+                }
+
+                let newPostCount = 0;
+                let postSeen = [];
+
+                const now = new Date();
+                const expirationDate = new Date(now.getTime() - this.markAsSeenAfter);
+
+                posts.forEach(post => {
+                    const postId = post.id;
+
+                    let alreadySeen = false;
+
+                    if (this.markAsSeenAfter >= 0
+                        && new Date(post.publicationTime) < expirationDate) {
+                        alreadySeen = true;
+                    } else {
+                        // no need for a map since iteration is done on at most 9 items
+                        for (const index in postIdAlreadySeen) {
+
+                            if (postIdAlreadySeen[index] === postId) {
+                                alreadySeen = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!alreadySeen) {
+                        newPostCount++;
+                    }
+
+                    postSeen.push(postId);
+                });
+
+                this._newPostSeen = postSeen;
+                this._unSeenPostCount = newPostCount;
+            }
+
+            _computeTimelineUrl(customDomain) {
+                if (customDomain && customDomain.verified) {
+                    return 'https://' + customDomain.name;
+                } else {
+                    return 'https://timeline.noticeable.io/' + this.projectId;
+                }
+            }
+
+            _displayBadge() {
+                if (this.triggerDisplayAfter > 0) {
+                    setTimeout(() => {
+                        this._dataLoaded = true;
+                        this._fireBadgeVisibleEvent();
+                        this.$.popup.notifyResize();
+                    }, this.triggerDisplayAfter);
+                } else {
+                    this._dataLoaded = true;
+                    this._fireBadgeVisibleEvent();
+                    this.$.popup.notifyResize();
+                }
+            }
+
+            _emojify(text) {
+                if (typeof twemoji === 'undefined') {
+                    return text;
+                }
+
+                return twemoji.parse(text);
+            }
+
+            _fireBadgeVisibleEvent() {
+                /**
+                 * Fired when the badge associated to the widget trigger is visible.
+                 *
+                 * @event noticeable-widget-visible
+                 */
+                this.dispatchEvent(new CustomEvent('noticeable-widget-visible', {
+                    bubbles: true,
+                    composed: true
+                }));
+            }
+
+            _handleDataError(event) {
+                console.error('Error while fetching widget data');
+
+                let response = event.detail.request.xhr.response;
+
+                if (response) {
+                    if (response.errors) {
+                        response.errors.forEach(error => {
+                            console.error(error.message);
+                        });
+                    } else {
+                        console.error(response.errors);
+                    }
+                }
+            }
+
+            _handleDataResponse(event) {
+                const response = event.detail.response;
+
+                if (!response.errors) {
+                    const project = response.data.project;
+
+                    this._initializeData(project, project.posts.edges);
+                } else {
+                    console.error('Error while fetching widget data from the API:', response.errors);
+                }
+            }
+
+            _initializeData(projectSettings, postEdges) {
+                this._customDomain = projectSettings ? projectSettings.timeline.customDomain : null;
+                const widgetSettings = projectSettings ? projectSettings.widget : null;
+
+                this._loadProperties(widgetSettings);
+
+                if (projectSettings && projectSettings.accentColor) {
+                    const accentColor = tinycolor(projectSettings.accentColor);
+                    this.updateStyles({'--post-content-link-color': accentColor.toHexString()});
+                }
+
+                let postDataTmp = [];
+                let postDataMapTmp = {};
+
+                if (postEdges.length > this.fetchLimit) {
+                    postEdges = postEdges.slice(postEdges.length - this.fetchLimit, postEdges.length);
+                }
+
+                postEdges.forEach(edge => {
+
+                    let remainingChars = 0;
+
+                    edge.node.labels.forEach(label => {
+                        remainingChars -= label.name.length;
+                    });
+
+                    remainingChars -= edge.node.title.length;
+                    remainingChars += this.postExcerptMaxLength + 6;
+
+                    edge.node.rawTitle = edge.node.title;
+                    edge.node.content = this._emojify(edge.node.content.html);
+                    edge.node.excerpt = this._emojify(v.prune(edge.node.excerpt, remainingChars));
+                    edge.node.title = this._emojify(edge.node.title);
+
+                    postDataTmp.push(edge.node);
+                    postDataMapTmp[edge.node.id] = edge.node;
+                });
+
+                this._postData = postDataTmp;
+                this._postDataMap = postDataMapTmp;
+
+                this._computeTriggerState(this._postData.reverse());
+
+                this._displayBadge();
+            }
+
+            _isDemonstrationModeEnabled() {
+                return this.accessToken === 'YOUR_ACCESS_TOKEN'
+                    || this.projectId === 'YOUR_PROJECT_ID';
+            }
+
+            _getPostReadClass(postId) {
+                let postRead = this._getLocalStorageItem('posts:read');
+
+                if (postRead && postRead.includes(postId)) {
+                    return 'popup-entry-read';
+                } else {
+                    return '';
+                }
+            }
+
+            /**
+             * Load custom element property values from _noticeable.io_ if
+             * `skipRemoteSettings` is `false`, otherwise default values are applied.
+             * Please note local definitions have precedence over remote settings.
+             */
+            _loadProperties(remoteWidgetSettings) {
+                if (!remoteWidgetSettings) {
+                    this.skipRemoteSettings = true;
+                }
+
+                this.closeOnEscKey = this._selectPropertyValue(
+                    this.closeOnEscKey, remoteWidgetSettings,
+                    (settings => settings.closeOnEscKey), true
+                );
+
+                this.closeOnOutsideClick = this._selectPropertyValue(
+                    this.closeOnOutsideClick, remoteWidgetSettings,
+                    (settings => settings.closeOnOutsideClick), true
+                );
+
+                this.fetchLimit = this._selectPropertyValue(
+                    this.fetchLimit, remoteWidgetSettings,
+                    (settings => settings.fetchLimit), 3
+                );
+
+                this._checkFetchLimitValue();
+
+                this.markAsSeenAfter = this._selectPropertyValue(
+                    this.markAsSeenAfter, remoteWidgetSettings,
+                    (settings => settings.markAsSeenAfter), -1
+                );
+
+                this.opened = this._selectPropertyValue(
+                    this.hasAttribute('opened') ? this.opened : undefined, remoteWidgetSettings,
+                    (settings => settings.opened), false
+                );
+
+                this.postExcerptMaxLength = this._selectPropertyValue(
+                    this.postExcerptMaxLength, remoteWidgetSettings,
+                    (settings => settings.postExcerptMaxLength), 140
+                );
+
+                this.postExcerptTarget = this._selectPropertyValue(
+                    this.postExcerptTarget, remoteWidgetSettings,
+                    (settings => settings.postExcerptTarget), 'widget'
+                );
+
+                this.popupOutsideScroll = this._selectPropertyValue(
+                    this.popupOutsideScroll, remoteWidgetSettings,
+                    (settings => settings.popup.allowOutsideScroll), false
+                );
+
+                this.popupDynamicAlign = this._selectPropertyValue(
+                    this.popupDynamicAlign, remoteWidgetSettings,
+                    (settings => settings.popup.useDynamicAlign), true
+                );
+
+                let defaultPopupFooterValue = '';
+
+                if (this._isDemonstrationModeEnabled()) {
+                    defaultPopupFooterValue = 'Acme changelog';
+                }
+
+                this.popupFooter = this._selectPropertyValue(
+                    this.popupFooter, remoteWidgetSettings,
+                    (settings => settings.popup.footer), defaultPopupFooterValue
+                );
+
+                this.popupHeader = this._selectPropertyValue(
+                    this.popupHeader, remoteWidgetSettings,
+                    (settings => settings.popup.header), ''
+                );
+
+                this.popupHorizontalAlign = this._selectPropertyValue(
+                    this.popupHorizontalAlign, remoteWidgetSettings,
+                    (settings => settings.popup.horizontalAlign), 'left'
+                );
+
+                this.popupHorizontalOffset = this._selectPropertyValue(
+                    this.popupHorizontalOffset, remoteWidgetSettings,
+                    (settings => settings.popup.horizontalOffset), 0
+                );
+
+                this.popupNoCancelOnEscKey = this._selectPropertyValue(
+                    this.popupNoCancelOnEscKey, remoteWidgetSettings,
+                    (settings => settings.popup.noCancelOnEscKey), false
+                );
+
+                this.popupVerticalAlign = this._selectPropertyValue(
+                    this.popupVerticalAlign, remoteWidgetSettings,
+                    (settings => settings.popup.verticalAlign), 'top'
+                );
+
+                this.popupVerticalOffset = this._selectPropertyValue(
+                    this.popupVerticalOffset, remoteWidgetSettings,
+                    (settings => settings.popup.verticalOffset), 10
+                );
+
+                this.popupBackdrop = this._selectPropertyValue(
+                    this.popupBackdrop, remoteWidgetSettings,
+                    (settings => settings.popup.withBackdrop), true
+                );
+
+                this.postContentFooter = this._selectPropertyValue(
+                    this.postContentFooter, remoteWidgetSettings,
+                    (settings => settings.postContentFooter), 'View more'
+                );
+
+                this.triggerDisplayAfter = this._selectPropertyValue(
+                    this.triggerDisplayAfter, remoteWidgetSettings,
+                    (settings => settings.trigger.displayAfter), 0
+                );
+
+                this.triggerDisplayCounter = this._selectPropertyValue(
+                    this.triggerDisplayCounter, remoteWidgetSettings,
+                    (settings => settings.trigger.displayCounter), true
+                );
+
+                this.triggerEyeCatching = this._selectPropertyValue(
+                    this.triggerEyeCatching, remoteWidgetSettings,
+                    (settings => settings.trigger.useEyeCatching), true
+                );
+
+                this.triggerSoftHide = this._selectPropertyValue(
+                    this.triggerSoftHide, remoteWidgetSettings,
+                    (settings => settings.trigger.useSoftHide), true
+                );
+
+                let defaultUseWhiteLabelValue = false;
+
+                if (this._isDemonstrationModeEnabled()) {
+                    defaultUseWhiteLabelValue = true;
+                }
+
+                this.whiteLabel = this._selectPropertyValue(
+                    this.whiteLabel, remoteWidgetSettings,
+                    (settings => settings.useWhiteLabel), defaultUseWhiteLabelValue
+                );
+            }
+
+            _onPageChange(event) {
+                this.$.popup.notifyResize();
+            }
+
+            _onParameterChange(accessToken, projectId) {
+                if (this._isDemonstrationModeEnabled()) {
+                    this._initializeData(null, JSON.parse(JSON.stringify(POST_SAMPLES)));
+                } else if (accessToken && projectId) {
+                    let xhr = this.$['xhr-data'];
+
+                    if (this.noCache) {
+                        xhr.method = 'POST';
+                        xhr.body = {
+                            "query": xhr.params.query
+                        };
+                    } else {
+                        xhr.method = 'GET';
+                    }
+
+                    xhr.generateRequest();
+                }
+            }
+
+            _onPopupOpened() {
+                if (this._newPostSeen) {
+                    this._setLocalStorageItem('posts:seen', this._newPostSeen);
+                    this._unSeenPostCount = 0;
+                }
+
+                /**
+                 * Fired when the popup is opened.
+                 *
+                 * @event noticeable-widget-popup-opened
+                 */
+                this.dispatchEvent(new CustomEvent('noticeable-widget-popup-opened', {bubbles: true, composed: true}));
+            }
+
+            _onPopupClosed() {
+                this.$['sliding-pages'].reset();
+
+                /**
+                 * Fired when the popup is closed.
+                 *
+                 * @event noticeable-widget-popup-closed
+                 */
+                this.dispatchEvent(new CustomEvent('noticeable-widget-popup-closed', {bubbles: true, composed: true}));
+            }
+
+            _onUnSeenPostCountChange(newValue) {
+                const badge = this.shadowRoot.querySelector('#trigger-badge');
+                const eyeCatchingTarget = this.shadowRoot.querySelector(this.triggerEyeCatchingTargetSelector);
+
+                if (!newValue) {
+                    badge.classList.remove('trigger-badge-enabled');
+                    badge.classList.add('trigger-badge-disabled');
+                    eyeCatchingTarget.classList.remove('eye-catching');
+                } else {
+                    if (this.triggerEyeCatching) {
+                        eyeCatchingTarget.classList.add('eye-catching');
+                    } else {
+                        eyeCatchingTarget.classList.remove('eye-catching');
+                    }
+
+                    badge.classList.remove('trigger-badge-disabled');
+                    badge.classList.add('trigger-badge-enabled');
+                }
+            }
+
+            _openPost(event) {
+                const postId = event.currentTarget.id;
+
+                this._post = this._postDataMap[postId];
+
+                let postRead = this._getLocalStorageItem('posts:read');
+
+                if (!postRead) {
+                    postRead = [];
+                }
+
+                if (!postRead.includes(postId)) {
+                    if (postRead.length > 20) {
+                        postRead = postRead.slice(10);
+                    }
+
+                    postRead.push(postId);
+
+                    this._setLocalStorageItem('posts:read', postRead);
+
+                    const classList = event.currentTarget.classList;
+                    classList.remove('popup-entry-read');
+                    classList.add('popup-entry-read');
+                }
+
+                if (this.postExcerptTarget === 'timeline') {
+                    window.open(
+                        this._timelineUrl + '/posts/' + this._post.slug,
+                        'noticeable-post');
+                } else {
+                    this.$['sliding-pages'].next();
+                }
+            }
+
+            _selectPropertyValue(localDef, remoteDef, remoteGetFunc, defaultValue) {
+                if (localDef === undefined) {
+                    if (this.skipRemoteSettings) {
+                        return defaultValue;
+                    } else {
+                        try {
+                            let remoteValue = remoteGetFunc(remoteDef);
+
+                            if (remoteValue === undefined || remoteValue === null) {
+                                return defaultValue;
+                            }
+
+                            return remoteValue;
+                        } catch (e) {
+                            return defaultValue;
+                        }
+                    }
+                } else {
+                    return localDef;
+                }
+            }
+
+            _showBadgeCounter(triggerDisplayCounter, postCount) {
+                return triggerDisplayCounter && postCount > 0;
+            }
+
+            _showPosts() {
+                this.$['sliding-pages'].previous();
+            }
+
+            /**
+             * Local storage manipulation.
+             */
+
+            _buildLocalStorageKey(key) {
+                return 'noticeable:project:' + this.projectId + ':widget:' + key;
+            }
+
+            _getLocalStorageItem(key) {
+                return JSON.parse(localStorage.getItem(this._buildLocalStorageKey(key)));
+            }
+
+            _removeLocalStorageItem(key) {
+                return localStorage.removeItem(this._buildLocalStorageKey(key));
+            }
+
+            _setLocalStorageItem(key, value) {
+                localStorage.setItem(this._buildLocalStorageKey(key), JSON.stringify(value));
+            }
+
+            _showTrigger(dataLoaded, unSeenPostCount, triggerSoftHide) {
+                return dataLoaded && (unSeenPostCount > 0 || (unSeenPostCount === 0 && triggerSoftHide));
+            }
+
+        }
+
+        window.customElements.define(NoticeableWidget.is, NoticeableWidget);
+    </script>
+</dom-module>
