@@ -21,7 +21,7 @@
     <link rel="import" href="bower_components/noticeable-widget/noticeable-widget.html">
 
     <script type="text/javascript">
-        function onVisible(event) {
+        function injectPulseAnimation(event) {
             event.target.injectCSS(
                 '@keyframes pulse {\n' +
                 '  0% {\n' +
@@ -33,7 +33,7 @@
                 '}');
         }
 
-        this.addEventListener('noticeable-widget-visible', e => this.onVisible(e));
+        this.addEventListener('NoticeableWidgetCreated', e => this.injectPulseAnimation(e));
     </script>
 
     <custom-style>

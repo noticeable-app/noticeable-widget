@@ -531,13 +531,12 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
         </style>
 
         <iron-ajax
-                id="xhr-data"
+                id="ironAjax"
                 content-type="application/json"
                 handle-as="json"
                 headers$='{"Authorization": "Apikey [[accessToken]]"}'
                 on-error="_handleDataError"
                 on-response="_handleDataResponse"
-                params$='{"query":"{ project(id:\"[[projectId]]\") { accentColor posts(before: \"now\" isDraft: false last:9) { edges { node { content { html } excerpt id labels { color name } publicationTime slug title } } } timeline { customDomain { name verified } } widget { closeOnEscKey closeOnOutsideClick fetchLimit markAsSeenAfter opened popup { allowOutsideScroll footer header horizontalAlign horizontalOffset useDynamicAlign verticalAlign verticalOffset withBackdrop } postContentFooter postExcerptMaxLength postExcerptTarget trigger { displayAfter displayCounter useEyeCatching useSoftHide } useWhiteLabel } } }"}'
                 url="[[apiUrl]]"></iron-ajax>
 
         <div id="trigger"
@@ -769,7 +768,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
 
             static get observers() {
                 return [
-                    '_onParameterChange(accessToken, projectId)'
+                    '_onParameterChange(accessToken, projectId, _segments)'
                 ]
             }
 
@@ -989,6 +988,15 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                         type: String
                     },
                     /**
+                     * A comma separated list of segmentation filters used to target specific groups of users.
+                     *
+                     * This property cannot be defined remotely from noticeable.io.
+                     **/
+                    segments: {
+                        observer: '_onSegmentsChange',
+                        type: String
+                    },
+                    /**
                      * Considers local attribute definitions only when enabled.
                      * Settings defined on the noticeable.io service are ignored.
                      *
@@ -1064,6 +1072,9 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                         type: Boolean,
                         value: false,
                     },
+                    _graphqlQuery: {
+                        type: String
+                    },
                     _newPostSeen: {
                         type: Array
                     },
@@ -1080,6 +1091,9 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                         type: Object,
                         value: undefined
                     },
+                    _segments: {
+                        type: Array
+                    },
                     _timelineUrl: {
                         computed: '_computeTimelineUrl(_customDomain)',
                         type: String
@@ -1092,11 +1106,44 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                 }
             }
 
+            constructor() {
+                super();
+                /**
+                 * Fired when the element is upgraded (that is, when the element is created,
+                 * or when a previously-created element becomes defined).
+                 *
+                 * @event NoticeableWidgetCreated
+                 */
+                this.dispatchEvent(new CustomEvent('NoticeableWidgetCreated', {bubbles: true, composed: true}));
+            }
+
             /**
              * Closes the popup, if opened.
              */
             close() {
                 this.$.popup.close();
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+
+                /**
+                 * Fired when the element is added to a document.
+                 *
+                 * @event NoticeableWidgetConnected
+                 */
+                this.dispatchEvent(new CustomEvent('NoticeableWidgetConnected', {bubbles: true, composed: true}));
+            }
+
+            disconnectedCallback() {
+                super.disconnectedCallback();
+
+                /**
+                 * Fired when the element is removed from a document.
+                 *
+                 * @event NoticeableWidgetDisconnected
+                 */
+                this.dispatchEvent(new CustomEvent('NoticeableWidgetDisconnected', {bubbles: true, composed: true}));
             }
 
             /**
@@ -1114,6 +1161,41 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
              */
             open() {
                 this.$.popup.open();
+            }
+
+            ready() {
+                super.ready();
+
+                let ironAjax = this.$.ironAjax;
+
+                ironAjax.addEventListener('iron-ajax-presend', (e) => {
+                    if (ironAjax.activeRequests && ironAjax.activeRequests.length > 1) {
+                        for (let i = 0; i < ironAjax.activeRequests.length - 1; i++) {
+                            ironAjax.activeRequests[i].abort();
+                        }
+                    }
+                });
+
+                /**
+                 * Fired when the component is ready.
+                 *
+                 * The element's template has been instantiated and initial property values have been set.
+                 * However, light DOM elements may not have been distributed.
+                 *
+                 * @event NoticeableWidgetConnected
+                 */
+                this.dispatchEvent(new CustomEvent('NoticeableWidgetReady', {bubbles: true, composed: true}));
+            }
+
+            /**
+             * Define segmentation filters to use for targeting specific groups of users.
+             */
+            setSegments(array) {
+                if (Array.isArray(array)) {
+                    this._segments = array;
+                } else {
+                    console.error('The argument passed to \'setSegment\' must be an array of Strings.');
+                }
             }
 
             /**
@@ -1196,17 +1278,17 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                 }
             }
 
-            _displayBadge() {
+            _updateBadge(isBadgeAlreadyVisible) {
                 if (this.triggerDisplayAfter > 0) {
                     setTimeout(() => {
                         this._dataLoaded = true;
-                        this._fireBadgeVisibleEvent();
                         this.$.popup.notifyResize();
+                        this._fireBadgeVisibleEvent(isBadgeAlreadyVisible);
                     }, this.triggerDisplayAfter);
                 } else {
                     this._dataLoaded = true;
-                    this._fireBadgeVisibleEvent();
                     this.$.popup.notifyResize();
+                    this._fireBadgeVisibleEvent(isBadgeAlreadyVisible);
                 }
             }
 
@@ -1218,19 +1300,30 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                 return twemoji.parse(text);
             }
 
-            _fireBadgeVisibleEvent() {
+            _fireBadgeVisibleEvent(isBadgeAlreadyVisible) {
+                if (isBadgeAlreadyVisible) {
+                    return;
+                }
+
                 /**
-                 * Fired when the badge associated to the widget trigger is visible.
+                 * Fired when the badge associated to the widget badge is visible.
                  *
-                 * @event noticeable-widget-visible
+                 * @event NoticeableWidgetBadgeVisible
                  */
-                this.dispatchEvent(new CustomEvent('noticeable-widget-visible', {
+                this.dispatchEvent(new CustomEvent('NoticeableWidgetBadgeVisible', {
                     bubbles: true,
-                    composed: true
+                    composed: true,
+                    detail: {
+                        unSeenPostCount: this._unSeenPostCount
+                    }
                 }));
             }
 
             _handleDataError(event) {
+                if (event.detail.request.aborted) {
+                    return;
+                }
+
                 console.error('Error while fetching widget data');
 
                 let response = event.detail.request.xhr.response;
@@ -1299,9 +1392,11 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                 this._postData = postDataTmp;
                 this._postDataMap = postDataMapTmp;
 
+                const _isBadgeAlreadyVisible = this._unSeenPostCount !== undefined;
+
                 this._computeTriggerState(this._postData.reverse());
 
-                this._displayBadge();
+                this._updateBadge(_isBadgeAlreadyVisible);
             }
 
             _isDemonstrationModeEnabled() {
@@ -1463,19 +1558,40 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                 this.$.popup.notifyResize();
             }
 
-            _onParameterChange(accessToken, projectId) {
+            _onParameterChange(accessToken, projectId, segments) {
+                if (segments === undefined && this.segments) {
+                    return;
+                }
+
                 if (this._isDemonstrationModeEnabled()) {
                     this._initializeData(null, JSON.parse(JSON.stringify(POST_SAMPLES)));
                 } else if (accessToken && projectId) {
-                    let xhr = this.$['xhr-data'];
+                    let xhr = this.$['ironAjax'];
+
+                    let segments = '';
+
+                    if (this._segments && this._segments.length > 0) {
+                        segments += 'segments: [';
+
+                        this._segments.forEach(segment => {
+                            segments += '"' + segment + '" ';
+                        });
+
+                        segments += ']';
+                    }
+
+                    const params = {
+                        query: "{ project(id:\"" + this.projectId + "\") { accentColor posts(before: \"now\" isDraft: false last:9 " + segments + ") { edges { node { content { html } excerpt id labels { color name } publicationTime slug title } } } timeline { customDomain { name verified } } widget { closeOnEscKey closeOnOutsideClick fetchLimit markAsSeenAfter opened popup { allowOutsideScroll footer header horizontalAlign horizontalOffset useDynamicAlign verticalAlign verticalOffset withBackdrop } postContentFooter postExcerptMaxLength postExcerptTarget trigger { displayAfter displayCounter useEyeCatching useSoftHide } useWhiteLabel } } }"
+                    };
 
                     if (this.noCache) {
                         xhr.method = 'POST';
                         xhr.body = {
-                            "query": xhr.params.query
+                            "query": params.query
                         };
                     } else {
                         xhr.method = 'GET';
+                        xhr.params = params;
                     }
 
                     xhr.generateRequest();
@@ -1491,9 +1607,9 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                 /**
                  * Fired when the popup is opened.
                  *
-                 * @event noticeable-widget-popup-opened
+                 * @event NoticeableWidgetPopupOpened
                  */
-                this.dispatchEvent(new CustomEvent('noticeable-widget-popup-opened', {bubbles: true, composed: true}));
+                this.dispatchEvent(new CustomEvent('NoticeableWidgetPopupOpened', {bubbles: true, composed: true}));
             }
 
             _onPopupClosed() {
@@ -1502,9 +1618,13 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                 /**
                  * Fired when the popup is closed.
                  *
-                 * @event noticeable-widget-popup-closed
+                 * @event NoticeableWidgetPopupClosed
                  */
-                this.dispatchEvent(new CustomEvent('noticeable-widget-popup-closed', {bubbles: true, composed: true}));
+                this.dispatchEvent(new CustomEvent('NoticeableWidgetPopupClosed', {bubbles: true, composed: true}));
+            }
+
+            _onSegmentsChange(segments) {
+                this._segments = segments.split(',');
             }
 
             _onUnSeenPostCountChange(newValue) {
