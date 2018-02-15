@@ -41,16 +41,15 @@
 </head>
 <body>
 <script type="text/javascript">
-    document.addEventListener('NoticeableWidgetCreated', function(e) {
-        // e.target.setSegments(['authenticated']);
-    }.bind(this));
+    document.addEventListener('noticeable-widget-created', function(e) {
+        e.target.setSegments(['authenticated']);
+    });
 </script>
 <div class="center">
     <div style="display: flex; align-items: center; align-content: center; align-self: center;">
         <noticeable-widget
                 id="widget"
-                access-token="5IlLHo9xhMYHk6sehnIp"
-                project-id="Qe1LRbWEWKaFAexZ48PL"
+                access-token="1FF4yGFwEejTMV4sGWYG" project-id="ZW6TLvP70GfMDgy9dHEX"
                 no-cache><a href="#">What's new</a></noticeable-widget>
     </div>
 </div>
