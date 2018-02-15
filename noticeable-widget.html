@@ -1116,9 +1116,9 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                  * Fired when the element is upgraded (that is, when the element is created,
                  * or when a previously-created element becomes defined).
                  *
-                 * @event NoticeableWidgetCreated
+                 * @event noticeable-widget-created
                  */
-                this.dispatchEvent(new CustomEvent('NoticeableWidgetCreated', {bubbles: true, composed: true}));
+                this.dispatchEvent(new CustomEvent('noticeable-widget-created', {bubbles: true, composed: true}));
             }
 
             /**
@@ -1134,9 +1134,9 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                 /**
                  * Fired when the element is added to a document.
                  *
-                 * @event NoticeableWidgetConnected
+                 * @event noticeable-widget-connected
                  */
-                this.dispatchEvent(new CustomEvent('NoticeableWidgetConnected', {bubbles: true, composed: true}));
+                this.dispatchEvent(new CustomEvent('noticeable-widget-connected', {bubbles: true, composed: true}));
             }
 
             disconnectedCallback() {
@@ -1145,9 +1145,9 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                 /**
                  * Fired when the element is removed from a document.
                  *
-                 * @event NoticeableWidgetDisconnected
+                 * @event noticeable-widget-disconnected
                  */
-                this.dispatchEvent(new CustomEvent('NoticeableWidgetDisconnected', {bubbles: true, composed: true}));
+                this.dispatchEvent(new CustomEvent('noticeable-widget-disconnected', {bubbles: true, composed: true}));
             }
 
             /**
@@ -1186,9 +1186,9 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                  * The element's template has been instantiated and initial property values have been set.
                  * However, light DOM elements may not have been distributed.
                  *
-                 * @event NoticeableWidgetConnected
+                 * @event noticeable-widget-ready
                  */
-                this.dispatchEvent(new CustomEvent('NoticeableWidgetReady', {bubbles: true, composed: true}));
+                this.dispatchEvent(new CustomEvent('noticeable-widget-ready', {bubbles: true, composed: true}));
             }
 
             /**
@@ -1312,9 +1312,9 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                 /**
                  * Fired when the badge associated to the widget badge is visible.
                  *
-                 * @event NoticeableWidgetBadgeVisible
+                 * @event noticeable-widget-badge-visible
                  */
-                this.dispatchEvent(new CustomEvent('NoticeableWidgetBadgeVisible', {
+                this.dispatchEvent(new CustomEvent('noticeable-widget-badge-visible', {
                     bubbles: true,
                     composed: true,
                     detail: {
@@ -1611,9 +1611,9 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                 /**
                  * Fired when the popup is opened.
                  *
-                 * @event NoticeableWidgetPopupOpened
+                 * @event noticeable-widget-popup-opened
                  */
-                this.dispatchEvent(new CustomEvent('NoticeableWidgetPopupOpened', {bubbles: true, composed: true}));
+                this.dispatchEvent(new CustomEvent('noticeable-widget-popup-opened', {bubbles: true, composed: true}));
             }
 
             _onPopupClosed() {
@@ -1622,9 +1622,9 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                 /**
                  * Fired when the popup is closed.
                  *
-                 * @event NoticeableWidgetPopupClosed
+                 * @event noticeable-widget-popup-closed
                  */
-                this.dispatchEvent(new CustomEvent('NoticeableWidgetPopupClosed', {bubbles: true, composed: true}));
+                this.dispatchEvent(new CustomEvent('noticeable-widget-popup-closed', {bubbles: true, composed: true}));
             }
 
             _onSegmentsChange(segments) {
