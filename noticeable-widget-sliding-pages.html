@@ -111,6 +111,7 @@ Copyright (c) 2017 Noticeable.io. All rights reserved.
 
                 /**
                  * Fired when the active page changes.
+                 *
                  * @event page-change
                  */
                 this.dispatchEvent(new CustomEvent('page-change'));
@@ -134,7 +135,7 @@ Copyright (c) 2017 Noticeable.io. All rights reserved.
 
             _translateX(elem, x, transition) {
                 elem.style.display = 'block';
-                elem.style.transition = transition ? 'transform 0.3s' : '';
+                elem.style.transition = transition ? 'transform 0.2s' : '';
                 elem.style.transform = 'translate3d(' + x + 'px, 0, 0)';
             }
 
