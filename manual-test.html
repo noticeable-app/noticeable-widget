@@ -41,8 +41,18 @@
 </head>
 <body>
 <script type="text/javascript">
-    document.addEventListener('noticeable-widget-created', function(e) {
+    document.addEventListener('noticeable-widget-ready', function(e) {
         e.target.setSegments(['authenticated']);
+        var widgetElement = e.target;
+        widgetElement.injectCSS(
+            '@keyframes pulse {\n' +
+            '  0% {\n' +
+            '    box-shadow: 0 0 0 0 rgba(209, 14, 0, 0);\n' +
+            '  }\n' +
+            '  40% {\n' +
+            '    box-shadow: 0 0 0 5px rgba(209, 14, 0, 0.3);\n' +
+            '  }\n' +
+            '}');
     });
 </script>
 <div class="center">

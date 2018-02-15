@@ -545,7 +545,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
 
         <div id="trigger"
              hidden="[[!_showTrigger(_dataLoaded, _unSeenPostCount, triggerSoftHide)]]"
-             on-tap="toggle"
+             on-click="toggle"
              slot="dropdown-trigger">
             <slot></slot>
             <slot name="badge">
@@ -585,7 +585,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                         <div class="popup-content">
                             <template is="dom-repeat" items="[[_postData]]">
                                 <div class$="popup-entry [[_getPostReadClass(item.id)]]" id$="[[item.id]]"
-                                     on-tap="_openPost">
+                                     on-click="_openPost">
                                     <div class="labels">
                                         <template is="dom-repeat" items="[[item.labels]]" as="label">
                                             <noticeable-widget-label color="[[label.color]]"
@@ -623,7 +623,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                             </a>
                             <div class="post-header-back">
                                 <paper-icon-button icon="noticeable-widget:arrow-back"
-                                                   on-tap="_showPosts"></paper-icon-button>
+                                                   on-click="_showPosts"></paper-icon-button>
                             </div>
                         </div>
 
@@ -646,8 +646,6 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
     </template>
 
     <script>
-        Polymer.setPassiveTouchGestures(true);
-
         const POST_SAMPLES = [
             {
                 node: {
@@ -764,7 +762,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
          * @polymer
          * @customElement
          */
-        class NoticeableWidget extends Polymer.GestureEventListeners(Polymer.Element) {
+        class NoticeableWidget extends Polymer.Element {
 
             static get is() {
                 return 'noticeable-widget';
@@ -1112,6 +1110,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
 
             constructor() {
                 super();
+                
                 /**
                  * Fired when the element is upgraded (that is, when the element is created,
                  * or when a previously-created element becomes defined).
@@ -1152,6 +1151,9 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
 
             /**
              * Injects a CSS definition as a new child element of the shadow root.
+             *
+             * You must wait for event `noticeable-widget-ready` before invoking this method,
+             * otherwise the call will fail.
              */
             injectCSS(def) {
                 const style = document.createElement('style');
