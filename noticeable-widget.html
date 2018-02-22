@@ -851,6 +851,10 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                      * Set to true to display a backdrop behind the popup when it is opened.
                      *
                      * Allowed values are _false_ or _true_. The default value is _false_.
+                     *
+                     * The widget with backdrop is styled to appear on top of other content by setting its
+                     * `z-index` property. However, you must ensure no element has a stacking context with a higher
+                     * `z-index` than its parent stacking context.
                      */
                     popupBackdrop: {
                         type: Object,
@@ -1194,7 +1198,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
             }
 
             /**
-             * Define segmentation filters to use for targeting specific groups of users.
+             * Define segmentation filters to use for targeting specific users.
              */
             setSegments(array) {
                 if (Array.isArray(array)) {
