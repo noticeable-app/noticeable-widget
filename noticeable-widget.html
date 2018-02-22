@@ -1529,7 +1529,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
 
                 this.postContentFooter = this._selectPropertyValue(
                     this.postContentFooter, remoteWidgetSettings,
-                    (settings => settings.postContentFooter), 'View more'
+                    (settings => settings.texts.postViewMoreButton), 'View more'
                 );
 
                 this.triggerDisplayAfter = this._selectPropertyValue(
@@ -1591,7 +1591,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                     }
 
                     const params = {
-                        query: "{ project(id:\"" + this.projectId + "\") { accentColor posts(before: \"now\" isDraft: false last:9 " + segments + ") { edges { node { content { html } excerpt id labels { color name } publicationTime slug title } } } timeline { customDomain { name verified } } widget { closeOnEscKey closeOnOutsideClick fetchLimit markAsSeenAfter opened popup { allowOutsideScroll footer header horizontalAlign horizontalOffset useDynamicAlign verticalAlign verticalOffset withBackdrop } postContentFooter postExcerptMaxLength postExcerptTarget trigger { displayAfter displayCounter useEyeCatching useSoftHide } useWhiteLabel } } }"
+                        query: "{ project(id:\"" + this.projectId + "\") { accentColor posts(before: \"now\" isDraft: false last:9 " + segments + ") { edges { node { content { html } excerpt id labels { color name } publicationTime slug title } } } timeline { customDomain { name verified } } widget { closeOnEscKey closeOnOutsideClick fetchLimit markAsSeenAfter opened popup { allowOutsideScroll footer header horizontalAlign horizontalOffset useDynamicAlign verticalAlign verticalOffset withBackdrop } postExcerptMaxLength postExcerptTarget texts { postViewMoreButton } trigger { displayAfter displayCounter useEyeCatching useSoftHide } useWhiteLabel } } }"
                     };
 
                     if (this.noCache) {
