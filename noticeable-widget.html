@@ -551,9 +551,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
             <slot name="badge">
                 <div id="trigger-badge" class="trigger-badge-disabled">
                     <div id="trigger-badge-counter"
-                         hidden="[[!_showBadgeCounter(triggerDisplayCounter, _unSeenPostCount)]]">
-                        [[_unSeenPostCount]]
-                    </div>
+                         hidden="[[!_showBadgeCounter(triggerDisplayCounter, _unSeenPostCount)]]">[[_unSeenPostCount]]</div>
                 </div>
             </slot>
         </div>
@@ -1417,7 +1415,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
             _getPostReadClass(postId) {
                 let postRead = this._getLocalStorageItem('posts:read');
 
-                if (postRead && postRead.includes(postId)) {
+                if (postRead && postRead.indexOf(postId) !== -1) {
                     return 'popup-entry-read';
                 } else {
                     return '';
@@ -1646,7 +1644,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                     badge.classList.add('trigger-badge-disabled');
                     eyeCatchingTarget.classList.remove('eye-catching');
                 } else {
-                    if (this.triggerEyeCatching) {
+                    if (this.triggerEyeCatching && !this._isIeBrowserBelow12()) {
                         eyeCatchingTarget.classList.add('eye-catching');
                     } else {
                         eyeCatchingTarget.classList.remove('eye-catching');
@@ -1655,6 +1653,10 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                     badge.classList.remove('trigger-badge-disabled');
                     badge.classList.add('trigger-badge-enabled');
                 }
+            }
+
+            _isIeBrowserBelow12() {
+                return navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') > 0;
             }
 
             _openPost(event) {
@@ -1668,7 +1670,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                     postRead = [];
                 }
 
-                if (!postRead.includes(postId)) {
+                if (postRead.indexOf(postId) === -1) {
                     if (postRead.length > 20) {
                         postRead = postRead.slice(10);
                     }
