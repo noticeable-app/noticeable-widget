@@ -4,6 +4,8 @@ libs/
 node_modules/
 public/
 
+.idea/
+
 *.iml
 *.lock
 *.log
