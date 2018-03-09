@@ -19,6 +19,7 @@
     "iron-ajax": "PolymerElements/iron-ajax#^2.0.6",
     "iron-dropdown": "PolymerElements/iron-dropdown#master",
     "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^2.1.0",
+    "object-hash": "^1.2.0",
     "paper-icon-button": "PolymerElements/paper-icon-button#^2.0.1",
     "polymer": "Polymer/polymer#^2.3.1",
     "tinycolor": "bgrins/TinyColor#^1.4.1",

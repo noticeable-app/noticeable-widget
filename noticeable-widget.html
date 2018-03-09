@@ -11,6 +11,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
 <link rel="import" href="noticeable-widget-icons.html">
 <link rel="import" href="noticeable-widget-label.html">
 <link rel="import" href="noticeable-widget-sliding-pages.html">
+<link rel="import" href="x-object-hash.html">
 <link rel="import" href="x-tinycolor.html">
 <link rel="import" href="x-twemoji.html">
 <link rel="import" href="x-voca.html">
@@ -580,7 +581,8 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
             <slot name="badge">
                 <div id="trigger-badge" class="trigger-badge-disabled">
                     <div id="trigger-badge-counter"
-                         hidden="[[!_showBadgeCounter(triggerDisplayCounter, _unSeenPostCount)]]">[[_unSeenPostCount]]</div>
+                         hidden="[[!_showBadgeCounter(triggerDisplayCounter, _unSeenPostCount)]]">[[_unSeenPostCount]]
+                    </div>
                 </div>
             </slot>
         </div>
@@ -1114,6 +1116,10 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                     _graphqlQuery: {
                         type: String
                     },
+                    _localStorageKey: {
+                        computed: '_computeLocalStorageKey(projectId, segments)',
+                        type: String
+                    },
                     _newPostSeen: {
                         type: Array
                     },
@@ -1268,6 +1274,13 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
 
                     this.fetchLimit = 9;
                 }
+            }
+
+            _computeLocalStorageKey(projectId, segments) {
+                return objectHash.sha1({
+                    projectId: projectId,
+                    segments: segments
+                });
             }
 
             _computeTriggerState(posts) {
@@ -1763,7 +1776,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
              */
 
             _buildLocalStorageKey(key) {
-                return 'noticeable:project:' + this.projectId + ':widget:' + key;
+                return 'noticeable:project:' + this._localStorageKey + ':widget:' + key;
             }
 
             _getLocalStorageItem(key) {
