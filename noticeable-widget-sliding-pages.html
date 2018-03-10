@@ -21,7 +21,7 @@ Copyright (c) 2017 Noticeable.io. All rights reserved.
         </style>
 
         <div>
-            <slot></slot>
+            <slot id="slot"></slot>
         </div>
 
     </template>
@@ -107,6 +107,9 @@ Copyright (c) 2017 Noticeable.io. All rights reserved.
             }
 
             _resetChildrenStyles() {
+                
+                this._scrollTop();
+
                 let elem = this.firstElementChild;
 
                 while (elem) {
@@ -128,6 +131,31 @@ Copyright (c) 2017 Noticeable.io. All rights reserved.
             _resetSelected() {
                 if (!this.selected || this.selected.parentElement !== this) {
                     this.selected = this.firstElementChild;
+                }
+            }
+
+            _scrollTop() {
+                try {
+                    const slotNodes = this.$.slot.assignedNodes();
+
+                    let scrollElement;
+
+                    for (let i = 0; i < slotNodes.length; i++) {
+                        const node = slotNodes[i];
+
+                        if (node instanceof HTMLDivElement
+                            && node.children.length >= 2
+                            && node.children[1].className === 'post-content') {
+                            scrollElement = node.children[1];
+                            break;
+                        }
+                    }
+
+                    if (scrollElement) {
+                        scrollElement.scrollTop = 0;
+                    }
+                } catch (error) {
+                    console.error(error);
                 }
             }
 
