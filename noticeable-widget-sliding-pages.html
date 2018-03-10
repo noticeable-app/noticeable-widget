@@ -65,6 +65,9 @@ Copyright (c) 2017 Noticeable.io. All rights reserved.
             next() {
                 const elem = this.selected && this.selected.nextElementSibling;
                 if (elem) {
+                    this.selected.style.position = 'absolute';
+                    elem.style.position = '';
+
                     // Setup transition start state
                     const oldSelected = this.selected;
                     this._translateX(oldSelected, 0);
@@ -72,14 +75,17 @@ Copyright (c) 2017 Noticeable.io. All rights reserved.
 
                     // Start the transition
                     this.selected = elem;
-                    this._translateX(oldSelected, -this.offsetWidth, true /* transition */);
-                    this._translateX(elem, 0, true /* transition */);
+                    this._translateX(oldSelected, -this.offsetWidth, true);
+                    this._translateX(elem, 0, true);
                 }
             }
 
             previous() {
                 const elem = this.selected && this.selected.previousElementSibling;
                 if (elem) {
+                    this.selected.style.position = 'absolute';
+                    elem.style.position = '';
+
                     // Setup transition start state
                     const oldSelected = this.selected;
                     this._translateX(oldSelected, 0);
@@ -87,8 +93,8 @@ Copyright (c) 2017 Noticeable.io. All rights reserved.
 
                     // Start the transition
                     this.selected = elem;
-                    this._translateX(oldSelected, this.offsetWidth, false /* transition */);
-                    this._translateX(elem, 0, true /* transition */);
+                    this._translateX(oldSelected, this.offsetWidth, false);
+                    this._translateX(elem, 0, true);
                 }
             }
 
@@ -102,8 +108,10 @@ Copyright (c) 2017 Noticeable.io. All rights reserved.
 
             _resetChildrenStyles() {
                 let elem = this.firstElementChild;
+
                 while (elem) {
                     elem.style.display = '';
+                    elem.style.position = '';
                     elem.style.transition = '';
                     elem.style.transform = '';
                     elem = elem.nextElementSibling;
