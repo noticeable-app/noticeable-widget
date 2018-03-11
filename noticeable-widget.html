@@ -828,6 +828,18 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                         value: 'https://dev.api.noticeable.io/graphql'
                     },
                     /**
+                     * The minimum delay (in ms) to wait before fetching the widget content again.
+                     *
+                     * If the value is lower than _0_, then the auto-refresh is disabled.
+                     *
+                     * The default value is _-1_.
+                     */
+                    autoRefresh: {
+                        observer: '_onAutoRefreshChange',
+                        type: Number,
+                        value: undefined
+                    },
+                    /**
                      * Set to _true_ to disable closing the widget with the _ESC_ key.
                      *
                      * The default value is _true_.
@@ -1109,6 +1121,9 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                     },
 
 
+                    _autoRefreshTimer: {
+                        type: Object
+                    },
                     _customDomain: {
                         type: Object
                     },
@@ -1337,6 +1352,30 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                 }
             }
 
+            _onAutoRefreshChange(newValue) {
+                if (newValue && Number.isInteger(newValue) && newValue >= 0) {
+                    if (this._autoRefreshTimer) {
+                        clearTimeout(this._autoRefreshTimer);
+                    }
+
+                    if (newValue < 60000) {
+                        console.warn(
+                            'The Noticeable widget does not allow refreshing more frequently than every minute. '
+                            + 'Auto refresh value set to 60 seconds.');
+                        newValue = 60000;
+                    }
+
+                    this._autoRefreshTimer = setInterval(() => {
+                        this.$['ironAjax'].generateRequest();
+                    }, newValue);
+                } else {
+                    if (this._autoRefreshTimer) {
+                        clearTimeout(this._autoRefreshTimer);
+                        this._autoRefreshTimer = undefined;
+                    }
+                }
+            }
+
             _updateBadge(isBadgeAlreadyVisible) {
                 if (this.triggerDisplayAfter > 0) {
                     setTimeout(() => {
@@ -1482,6 +1521,11 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                 if (!remoteWidgetSettings) {
                     this.skipRemoteSettings = true;
                 }
+
+                this.autoRefresh = this._selectPropertyValue(
+                    this.autoRefresh, remoteWidgetSettings,
+                    (settings => settings.autoRefresh), 3600000
+                );
 
                 this.closeOnEscKey = this._selectPropertyValue(
                     this.closeOnEscKey, remoteWidgetSettings,
@@ -1640,7 +1684,7 @@ Copyright (c) 2017 Noticeable (noticeable.io). All rights reserved.
                     }
 
                     const params = {
-                        query: "{ project(id:\"" + this.projectId + "\") { accentColor posts(before: \"now\" isDraft: false last:9 " + segments + ") { edges { node { content { html } excerpt id labels { color name } publicationTime slug title } } } timeline { customDomain { name verified } } widget { closeOnEscKey closeOnOutsideClick fetchLimit markAsSeenAfter opened popup { allowOutsideScroll footer header horizontalAlign horizontalOffset useDynamicAlign verticalAlign verticalOffset withBackdrop } postExcerptMaxLength postExcerptTarget texts { postViewMoreButton } trigger { displayAfter displayCounter useEyeCatching useSoftHide } useWhiteLabel } } }"
+                        query: "{ project(id:\"" + this.projectId + "\") { accentColor posts(before: \"now\" isDraft: false last:9 " + segments + ") { edges { node { content { html } excerpt id labels { color name } publicationTime slug title } } } timeline { customDomain { name verified } } widget { autoRefresh closeOnEscKey closeOnOutsideClick fetchLimit markAsSeenAfter opened popup { allowOutsideScroll footer header horizontalAlign horizontalOffset useDynamicAlign verticalAlign verticalOffset withBackdrop } postExcerptMaxLength postExcerptTarget texts { postViewMoreButton } trigger { displayAfter displayCounter useEyeCatching useSoftHide } useWhiteLabel } } }"
                     };
 
                     if (this.noCache) {
