@@ -21,8 +21,9 @@
     <link rel="import" href="bower_components/noticeable-widget/noticeable-widget.html">
 
     <script type="text/javascript">
-        function injectPulseAnimation(event) {
-            event.target.injectCSS(
+        this.addEventListener('noticeable-widget-ready', function (event) {
+            var widgetElement = event.target;
+            widgetElement.injectCSS(
                 '@keyframes pulse {\n' +
                 '  0% {\n' +
                 '    box-shadow: 0 0 0 0 rgba(209, 14, 0, 0);\n' +
@@ -31,9 +32,7 @@
                 '    box-shadow: 0 0 0 5px rgba(209, 14, 0, 0.3);\n' +
                 '  }\n' +
                 '}');
-        }
-
-        this.addEventListener('noticeable-widget-created', event => this.injectPulseAnimation(event));
+        });
     </script>
 
     <custom-style>
