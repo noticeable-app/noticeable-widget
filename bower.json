@@ -6,7 +6,6 @@
   "description": "Noticeable.io Widget.",
   "license": "Copyright © 2017-2018 Noticeable",
   "homepage": "https://noticeable.io",
-  "private": true,
   "ignore": [
     "**/.*",
     "bower_components",

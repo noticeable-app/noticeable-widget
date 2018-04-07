@@ -1,20 +1,20 @@
 {
   "author": "Laurent Pellegrino",
   "bugs": {
-    "url": "https://github.com/lpellegr/noticeable-widget/issues"
+    "url": "https://github.com/noticeableapp/noticeable-widget/issues"
   },
   "description": "noticeable-widget",
   "devDependencies": {
     "bower": "^1.8.4",
     "firebase-tools": "^3.18.2"
   },
-  "homepage": "https://github.com/lpellegr/noticeable-widget#readme",
+  "homepage": "https://github.com/noticeableapp/noticeable-widget#readme",
   "license": "UNLICENSED",
   "name": "noticeable-widget",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/lpellegr/noticeable-widget.git"
+    "url": "https://github.com/noticeableapp/noticeable-widget.git"
   },
   "scripts": {
     "clean": "rm -rf build/ public/v1/",
