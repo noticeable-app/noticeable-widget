@@ -4,29 +4,34 @@
     "Laurent Pellegrino <laurent.pellegrino@noticeable.io>"
   ],
   "description": "Noticeable.io Widget.",
-  "license": "Copyright © 2017 Noticeable.io",
+  "license": "Copyright © 2017-2018 Noticeable",
   "homepage": "https://noticeable.io",
   "private": true,
   "ignore": [
     "**/.*",
     "bower_components",
+    "build",
+    "demo",
+    "doc",
     "libs",
+    "public",
     "node_modules",
+    "samples",
     "test",
     "tests"
   ],
   "dependencies": {
-    "iron-ajax": "PolymerElements/iron-ajax#^2.0.6",
-    "iron-dropdown": "PolymerElements/iron-dropdown#master",
-    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^2.1.0",
-    "object-hash": "^1.2.0",
-    "paper-icon-button": "PolymerElements/paper-icon-button#^2.0.1",
-    "polymer": "Polymer/polymer#^2.3.1",
+    "iron-ajax": "PolymerElements/iron-ajax#^2.1.2",
+    "iron-dropdown": "PolymerElements/iron-dropdown#^2.2.0",
+    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^2.2.0",
+    "object-hash": "^1.3.0",
+    "paper-icon-button": "PolymerElements/paper-icon-button#^2.1.0",
+    "polymer": "Polymer/polymer#^2.6.0",
     "tinycolor": "bgrins/TinyColor#^1.4.1",
-    "voca": "panzerdp/voca#^1.3.1"
+    "voca": "panzerdp/voca#^1.4.0"
   },
   "devDependencies": {
-    "web-component-tester": "Polymer/web-component-tester#^6.3.0",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.20"
+    "web-component-tester": "Polymer/web-component-tester#^6.5.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.2.0"
   }
 }
