@@ -552,7 +552,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             }
 
             table {
-                border-collapse:collapse;
+                border-collapse: collapse;
                 width: 100%;
             }
 
@@ -572,13 +572,29 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
         </style>
 
         <iron-ajax
-                id="ironAjax"
+                id="apiAjax"
                 content-type="application/json"
                 handle-as="json"
                 headers$='{"Authorization": "Apikey [[accessToken]]"}'
                 on-error="_handleDataError"
                 on-response="_handleDataResponse"
                 url="[[apiUrl]]"></iron-ajax>
+
+        <iron-ajax
+                id="widgetTriggerClickAjax"
+                content-type="application/x-www-form-urlencoded"
+                handle-as="text"
+                method="POST"
+                timeout="3000"
+                url="https://dev.metrics.noticeable.io/clicks/widget/trigger"></iron-ajax>
+
+        <iron-ajax
+                id="widgetViewPostAjax"
+                content-type="application/x-www-form-urlencoded"
+                handle-as="text"
+                method="POST"
+                timeout="3000"
+                url="https://dev.metrics.noticeable.io/views/widget/post"></iron-ajax>
 
         <div id="trigger"
              hidden="[[!_showTrigger(_dataLoaded, _unSeenPostCount, triggerSoftHide)]]"
@@ -1236,12 +1252,12 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             ready() {
                 super.ready();
 
-                let ironAjax = this.$.ironAjax;
+                let apiAjax = this.$.apiAjax;
 
-                ironAjax.addEventListener('iron-ajax-presend', (e) => {
-                    if (ironAjax.activeRequests && ironAjax.activeRequests.length > 1) {
-                        for (let i = 0; i < ironAjax.activeRequests.length - 1; i++) {
-                            ironAjax.activeRequests[i].abort();
+                apiAjax.addEventListener('iron-ajax-presend', (e) => {
+                    if (apiAjax.activeRequests && apiAjax.activeRequests.length > 1) {
+                        for (let i = 0; i < apiAjax.activeRequests.length - 1; i++) {
+                            apiAjax.activeRequests[i].abort();
                         }
                     }
                 });
@@ -1373,7 +1389,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     }
 
                     this._autoRefreshTimer = setInterval(() => {
-                        this.$['ironAjax'].generateRequest();
+                        this.$['apiAjax'].generateRequest();
                     }, newValue);
                 } else {
                     if (this._autoRefreshTimer) {
@@ -1676,7 +1692,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 if (this._isDemonstrationModeEnabled()) {
                     this._initializeData(null, JSON.parse(JSON.stringify(POST_SAMPLES)));
                 } else if (accessToken && projectId) {
-                    let xhr = this.$['ironAjax'];
+                    let xhr = this.$['apiAjax'];
 
                     let segments = '';
 
@@ -1713,6 +1729,9 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     this._setLocalStorageItem('posts:seen', this._newPostSeen);
                     this._unSeenPostCount = 0;
                 }
+
+                this.$.widgetTriggerClickAjax.body = 'p=' + this.projectId;
+                this.$.widgetTriggerClickAjax.generateRequest();
 
                 /**
                  * Fired when the popup is opened.
@@ -1791,6 +1810,9 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         this._timelineUrl + '/posts/' + this._post.slug,
                         'noticeable-post');
                 } else {
+                    this.$.widgetViewPostAjax.body = 'p=' + this.projectId + '&m=' + postId;
+                    this.$.widgetViewPostAjax.generateRequest();
+
                     this.$['sliding-pages'].next();
                 }
             }

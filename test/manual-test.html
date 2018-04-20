@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>Noticeable - Manual Test</title>
 
-    <script src="components/webcomponentsjs/webcomponents-loader.js" async></script>
-    <link rel="import" href="components/noticeable-widget/noticeable-widget.html" async>
+    <script src="../components/webcomponentsjs/webcomponents-loader.js" async></script>
+    <link rel="import" href="../components/noticeable-widget/noticeable-widget.html" async>
 
     <custom-style>
         <style type="text/css">
             body {
                 font-family: 'Roboto', 'Noto', sans-serif;
                 font-size: 16px;
+                height: 5000px;
             }
 
             .center {
@@ -41,7 +42,7 @@
 </head>
 <body>
 <script type="text/javascript">
-    document.addEventListener('noticeable-widget-ready', function(e) {
+    document.addEventListener('noticeable-widget-ready', function (e) {
         e.target.setSegments(['authenticated']);
         var widgetElement = e.target;
         widgetElement.injectCSS(
