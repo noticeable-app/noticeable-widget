@@ -202,6 +202,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 border-bottom: 1px solid #e5e5e5;
                 cursor: pointer;
                 padding: 16px 12px;
+                border-left: 3px solid var(--noticeable-widget-popup-entry-unread-border-color, #1e88e5);
 
                 @apply --noticeable-widget-popup-entry;
             }
@@ -214,10 +215,14 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
 
             .popup-entry:last-of-type {
                 border: 0;
+                border-left: 3px solid var(--noticeable-widget-popup-entry-unread-border-color, #1e88e5);
+
                 @apply --noticeable-widget-popup-entry-last-of-type;
             }
 
             .popup-entry-read {
+                border-left: 0 !important;
+
                 @apply --noticeable-widget-popup-entry-read;
             }
 
@@ -257,7 +262,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             }
 
             .post-content a {
-                color: var(--post-content-link-color, #1f55ff);
+                color: var(--noticeable-widget-post-content-link-color, #1f55ff);
                 text-decoration: underline;
 
                 @apply --noticeable-widget-popup-post-content-a;
@@ -773,11 +778,12 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
          * --noticeable-widget-popup-content | Mixin applied to selector `.popup-content`.
          * --noticeable-widget-popup-entry-labels | Mixin applied to selector `.labels`.
          * --noticeable-widget-popup-entry | Mixin applied to selector `.popup-entry`.
+         * --noticeable-widget-popup-entry-excerpt | Mixin applied to selector `.popup-entry .excerpt`.
          * --noticeable-widget-popup-entry-hover | Mixin applied to selector `.popup-entry:hover`.
          * --noticeable-widget-popup-entry-last-of-type | Mixin applied to selector `.popup-entry:last-of-type`.
          * --noticeable-widget-popup-entry-read | Mixin applied to selector `.popup-entry-read`.
          * --noticeable-widget-popup-entry-read-hover | Mixin applied to selector `.popup-entry-read:hover`.
-         * --noticeable-widget-popup-entry-excerpt | Mixin applied to selector `.popup-entry .excerpt`.
+         * --noticeable-widget-popup-entry-unread-border-color | Custom property used to alter the color of the left border set to unread posts. The default value is based on the project accent color.
          * --noticeable-widget-popup-entry-title | Mixin applied to selector `.popup-entry .title`.
          * --noticeable-widget-popup-footer | Mixin applied to selector `.popup-footer`.
          * --noticeable-widget-popup-footer-a | Mixin applied to selector `.popup-footer a`.
@@ -802,6 +808,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
          * --noticeable-widget-popup-post-content-h5 | Mixin applied to selector `.post-content h5`.
          * --noticeable-widget-popup-post-content-h6 | Mixin applied to selector `.post-content h6`.
          * --noticeable-widget-popup-post-content-img | Mixin applied to selector `.post-content img`.
+         * --noticeable-widget-post-content-link-color | Custom property used to alter links color. The default value is based on the project accent color.
          * --noticeable-widget-popup-post-content-value | Mixin applied to selector `.post-content-value`.
          * --noticeable-widget-popup-post-header | Mixin applied to selector `.post-header`.
          * --noticeable-widget-popup-post-header-a | Mixin applied to selector `.post-header a`.
@@ -1482,7 +1489,11 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
 
                 if (projectSettings && projectSettings.accentColor) {
                     const accentColor = tinycolor(projectSettings.accentColor);
-                    this.updateStyles({'--post-content-link-color': accentColor.toHexString()});
+                    const hexString = accentColor.toHexString();
+                    this.updateStyles({
+                        '--noticeable-widget-popup-entry-unread-border-color': hexString,
+                        '--noticeable-widget-post-content-link-color': hexString
+                    });
                 }
 
                 let postDataTmp = [];
