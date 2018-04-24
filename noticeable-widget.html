@@ -589,7 +589,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 handle-as="json"
                 method="GET"
                 on-response="_loadDemonstrationData"
-                url="https://dev.cdn.noticeable.io/v1/libs/noticeable-widget/post-samples.json"></iron-ajax>
+                url="https://cdn.noticeable.io/v1/libs/noticeable-widget/post-samples.json"></iron-ajax>
 
         <iron-ajax
                 id="widgetTriggerClickAjax"
@@ -597,7 +597,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 handle-as="text"
                 method="POST"
                 timeout="3000"
-                url="https://dev.metrics.noticeable.io/clicks/widget/trigger"></iron-ajax>
+                url="https://metrics.noticeable.io/clicks/widget/trigger"></iron-ajax>
 
         <iron-ajax
                 id="widgetViewPostAjax"
@@ -605,7 +605,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 handle-as="text"
                 method="POST"
                 timeout="3000"
-                url="https://dev.metrics.noticeable.io/views/widget/post"></iron-ajax>
+                url="https://metrics.noticeable.io/views/widget/post"></iron-ajax>
 
         <div id="trigger"
              hidden="[[!_showTrigger(_dataLoaded, _unSeenPostCount, triggerSoftHide)]]"

@@ -1,7 +1,7 @@
 (function () {
     var d = document;
     var head = d.getElementsByTagName('head')[0];
-    var prefix = 'https://dev.cdn.noticeable.io/v1/libs/';
+    var prefix = 'https://cdn.noticeable.io/v1/libs/';
     var script = d.createElement('script');
 
     function importWebcomponentsLoader() {
