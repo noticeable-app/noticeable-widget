@@ -429,6 +429,32 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 @apply --noticeable-widget-trigger-badge-enabled;
             }
 
+            /** Spinner related styles */
+
+            .spinner {
+                padding: 36px 32px;
+            }
+
+            .spinner:before {
+                animation: spinner 1s linear infinite;
+                border: 3px solid var(--noticeable-widget-spinner-background-color, #d1d1d1);
+                border-radius: 50%;
+                border-top-color: var(--noticeable-widget-spinner-foreground-color, #999999);
+                box-sizing: border-box;
+                content: '';
+                height: 24px;
+                left: 50%;
+                margin-top: -10px;
+                margin-left: -10px;
+                position: absolute;
+                top: 50%;
+                width: 24px;
+            }
+
+            @keyframes spinner {
+                to { transform: rotate(360deg); }
+            }
+
             /** Markdown related styles */
 
             /*
@@ -591,12 +617,11 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 url="https://metrics.noticeable.io/views/widget/post"></iron-ajax>
 
         <div id="trigger"
-             hidden="[[!_showTrigger(_dataLoaded, _unSeenPostCount, triggerSoftHide)]]"
              on-click="toggle"
              slot="dropdown-trigger">
             <slot></slot>
             <slot name="badge">
-                <div id="trigger-badge" class="trigger-badge-disabled">
+                <div id="trigger-badge" class="trigger-badge-disabled" hidden="[[!_showTriggerBadge(_dataLoaded, _unSeenPostCount, triggerSoftHide)]]">
                     <div id="trigger-badge-counter"
                          hidden="[[!_showBadgeCounter(triggerDisplayCounter, _unSeenPostCount)]]">[[_unSeenPostCount]]
                     </div>
@@ -619,8 +644,8 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                        vertical-offset="[[popupVerticalOffset]]"
                        with-backdrop="[[popupBackdrop]]">
 
-            <div id="popup-container" hidden="[[!_dataLoaded]]" slot="dropdown-content">
-                <noticeable-widget-sliding-pages id="sliding-pages" on-page-change="_onPageChange">
+            <div id="popup-container"  slot="dropdown-content">
+                <noticeable-widget-sliding-pages id="sliding-pages" hidden="[[!_dataLoaded]]" on-page-change="_onPageChange">
                     <div>
                         <template is="dom-if" if="[[popupHeader]]">
                             <div class="popup-header">
@@ -686,6 +711,9 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         </div>
                     </div>
                 </noticeable-widget-sliding-pages>
+                <div hidden="[[_dataLoaded]]" slot="dropdown-content">
+                    <div class="spinner"></div>
+                </div>
             </div>
         </iron-dropdown>
     </template>
@@ -767,6 +795,8 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
          * --noticeable-widget-popup-post-header-back | Mixin applied to selector `.post-header-back`.
          * --noticeable-widget-post-header-title | Mixin applied to selector `.post-header-title`.
          * --noticeable-widget-sliding-pages | Mixin applied to selector `noticeable-widget-sliding-pages`.
+         * --noticeable-widget-spinner-background-color | Custom property controlling the background color of the spinner used when loading posts.
+         * --noticeable-widget-spinner-foreground-color | Custom property controlling the foreground color of the spinner used when loading posts.
          * --noticeable-widget-trigger | Mixin applied to selector `#trigger`.
          * --noticeable-widget-trigger-badge | Mixin applied to selector `#trigger-badge`.
          * --noticeable-widget-trigger-badge-counter | Mixin applied to selector `#trigger-badge-counter`.
@@ -1080,9 +1110,12 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         value: '#trigger-badge'
                     },
                     /**
-                     * When enabled, prevents the trigger to be hidden even if all posts have been seen.
+                     * When enabled, prevents the badge trigger to be hidden even if all posts have been seen.
                      *
                      * Allowed values are _false_ or _true_. The default value is _true_.
+                     *
+                     * If you need to hide the badge until post data are fetched, you need to set
+                     * this property to _false_ programmatically.
                      */
                     triggerSoftHide: {
                         type: Object,
@@ -1540,7 +1573,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 );
 
                 this.opened = this._selectPropertyValue(
-                    this.hasAttribute('opened') ? this.opened : undefined, remoteWidgetSettings,
+                    this.hasAttribute('opened') ? this.opened : this.$.popup.opened, remoteWidgetSettings,
                     (settings => settings.opened), false
                 );
 
@@ -1838,8 +1871,12 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 localStorage.setItem(this._buildLocalStorageKey(key), JSON.stringify(value));
             }
 
-            _showTrigger(dataLoaded, unSeenPostCount, triggerSoftHide) {
-                return dataLoaded && (unSeenPostCount > 0 || (unSeenPostCount === 0 && triggerSoftHide));
+            _showTriggerBadge(dataLoaded, unSeenPostCount, triggerSoftHide) {
+                if (dataLoaded) {
+                    return unSeenPostCount > 0 || (unSeenPostCount === 0 && triggerSoftHide);
+                }
+
+                return triggerSoftHide === undefined || triggerSoftHide;
             }
 
         }
