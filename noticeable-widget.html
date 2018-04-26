@@ -47,6 +47,14 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 @apply --noticeable-widget-sliding-pages;
             }
 
+            /**
+             * Workaround to fix main document style leak in this widget:
+             * https://github.com/webcomponents/shadydom/issues/232
+             */
+            p {
+                margin: 1em 0px;
+            }
+
             #popup-container {
                 background-color: white;
                 border: 1px solid #e5e5e5;
