@@ -63,6 +63,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
                 color: #424242;
                 line-height: 1.26em;
+                max-height: none !important;
                 overflow-y: hidden;
                 padding: 0;
                 width: 400px;
@@ -371,7 +372,10 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             .post-header-back {
                 left: 8px;
                 position: absolute;
-                top: 4px;
+                top: 50%;
+                transform: translateY(-50%);
+                -webkit-transform: translateY(-50%);
+                -ms-transform: translateY(-50%);
 
                 @apply --noticeable-widget-popup-post-header-back;
             }
@@ -381,8 +385,6 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 padding: 16px 48px 16px 56px;
                 overflow: hidden;
                 text-align: center;
-                white-space: nowrap;
-                text-overflow: ellipsis;
 
                 @apply --noticeable-widget-post-header-title;
             }
@@ -461,7 +463,9 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             }
 
             @keyframes spinner {
-                to { transform: rotate(360deg); }
+                to {
+                    transform: rotate(360deg);
+                }
             }
 
             /** Markdown related styles */
@@ -591,6 +595,23 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 text-align: left;
             }
 
+            /**
+             * Media queries for screens with small width (phones).
+             */
+
+            @media only screen and (max-width: 600px) {
+
+                #popup-container {
+                    max-height: none !important;
+                    max-width: 400px !important;
+                    margin: 8px;
+                    width: auto !important;
+
+                    @apply --noticeable-widget-popup-container-for-phone;
+                }
+
+            }
+
         </style>
 
         <iron-ajax
@@ -630,7 +651,8 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
              slot="dropdown-trigger">
             <slot></slot>
             <slot name="badge">
-                <div id="trigger-badge" class="trigger-badge-disabled" hidden="[[!_showTriggerBadge(_dataLoaded, _unSeenPostCount, triggerSoftHide)]]">
+                <div id="trigger-badge" class="trigger-badge-disabled"
+                     hidden="[[!_showTriggerBadge(_dataLoaded, _unSeenPostCount, triggerSoftHide)]]">
                     <div id="trigger-badge-counter"
                          hidden="[[!_showBadgeCounter(triggerDisplayCounter, _unSeenPostCount)]]">[[_unSeenPostCount]]
                     </div>
@@ -653,8 +675,9 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                        vertical-offset="[[popupVerticalOffset]]"
                        with-backdrop="[[popupBackdrop]]">
 
-            <div id="popup-container"  slot="dropdown-content">
-                <noticeable-widget-sliding-pages id="sliding-pages" hidden="[[!_dataLoaded]]" on-page-change="_onPageChange">
+            <div id="popup-container" slot="dropdown-content">
+                <noticeable-widget-sliding-pages id="sliding-pages" hidden="[[!_dataLoaded]]"
+                                                 on-page-change="_onPageChange">
                     <div>
                         <template is="dom-if" if="[[popupHeader]]">
                             <div class="popup-header">
@@ -696,14 +719,15 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     </div>
                     <div>
                         <div class="post-header">
-                            <a href="[[_timelineUrl]]/posts/[[_post.slug]]"
-                               target="noticeable-post"
-                               title="[[_post.rawTitle]]">
-                                <div class="post-header-title" inner-h-t-m-l="[[_post.title]]"></div>
-                            </a>
                             <div class="post-header-back">
                                 <paper-icon-button icon="noticeable-widget:arrow-back"
                                                    on-tap="_showPosts"></paper-icon-button>
+                            </div>
+                            <div class="post-header-title">
+                                <a href="[[_timelineUrl]]/posts/[[_post.slug]]"
+                                   inner-h-t-m-l="[[_post.title]]"
+                                   target="noticeable-post"
+                                   title="[[_post.rawTitle]]"></a>
                             </div>
                         </div>
 
@@ -762,6 +786,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
          * --noticeable-widget-emoji | Mixin applied to selector `.emoji`.
          * --noticeable-widget-label | Mixin applied to all instances of `noticeable-widget-label` element.
          * --noticeable-widget-popup-container | Mixin applied to selector `#popup-container`.
+         * --noticeable-widget-popup-container-for-phone | Mixin applied to selector `#popup-container` on small devices (phones).
          * --noticeable-widget-popup-content | Mixin applied to selector `.popup-content`.
          * --noticeable-widget-popup-entry-labels | Mixin applied to selector `.labels`.
          * --noticeable-widget-popup-entry | Mixin applied to selector `.popup-entry`.
