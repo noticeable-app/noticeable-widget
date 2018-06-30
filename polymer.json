@@ -12,7 +12,15 @@
   "main": "noticeable-widget.html",
   "sources": [
     "bower.json",
-    "noticeable-*.html"
+    "noticeable-widget.html",
+    "noticeable-widget.js",
+    "noticeable-widget-icons.html",
+    "noticeable-widget-label.html",
+    "noticeable-widget-sliding-pages.html",
+    "x-object-hash.html",
+    "x-tinycolor.html",
+    "x-twemoji.html",
+    "x-voca.html"
   ],
   "extraDependencies": [
     "bower_components/webcomponentsjs/*.js"
