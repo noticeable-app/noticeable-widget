@@ -728,7 +728,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                                                    on-tap="_showPosts"></paper-icon-button>
                             </div>
                             <div class="post-header-title">
-                                <a href="[[_timelineUrl]]/posts/[[_post.slug]]"
+                                <a href="[[_postHeaderTitleLink(_post)]]"
                                    inner-h-t-m-l="[[_post.title]]"
                                    target="noticeable-post"
                                    title="[[_post.rawTitle]]"></a>
@@ -1857,6 +1857,14 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
 
                     this.$['sliding-pages'].next();
                 }
+            }
+
+            _postHeaderTitleLink(_post) {
+                if (!this.postContentFooter) {
+                    return '';
+                }
+
+                return this._timelineUrl + '/posts/' + _post.slug;
             }
 
             _selectPropertyValue(localDef, remoteDef, remoteGetFunc, defaultValue) {
