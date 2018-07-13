@@ -5,20 +5,26 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
+    <title>Noticeable Widget Samples</title>
+
+    <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+
+    <script type="module">
+        import '@polymer/iron-demo-helpers/demo-snippet.js';
+        import '@noticeable/widgets/noticeable-widget-popup.js';
+    </script>
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-109155995-4"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
         gtag('js', new Date());
         gtag('config', 'UA-109155995-4');
     </script>
-
-
-    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-
-    <link rel="import" href="bower_components/iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="bower_components/noticeable-widget/noticeable-widget.html">
 
     <script type="text/javascript">
         this.addEventListener('noticeable-widget-ready', function (event) {
@@ -36,7 +42,23 @@
     </script>
 
     <custom-style>
-        <style is="custom-style" include="demo-pages-shared-styles">
+        <style is="custom-style">
+            .horizontal-section-container {
+                @apply --layout-horizontal;
+                @apply --layout-center-justified;
+                @apply --layout-wrap;
+            }
+
+            .vertical-section-container {
+                @apply --layout-vertical;
+                @apply --center-justified;
+            }
+
+            .centered {
+                max-width: 600px;
+                margin-left: auto;
+                margin-right: auto;
+            }
 
             a {
                 color: inherit;
@@ -48,11 +70,12 @@
             }
 
             body {
+                background-color: #fafafa;
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
                 font-size: 16px !important;
                 color: #24292e;
                 line-height: 1.5;
-                margin-top: 16px;
+                margin-top: 42px;
                 text-rendering: optimizeLegibility;
                 -webkit-font-smoothing: antialiased;
             }
@@ -76,7 +99,7 @@
                 color: #666;
                 font-size: 20px;
                 font-weight: 100;
-                margin-bottom: 28px;
+                margin-bottom: 36px;
                 margin-top: 0;
                 text-align: center;
             }
@@ -117,24 +140,23 @@
 
     <script type="text/javascript">
         function resetBadgeCounter() {
-            var pattern = 'noticeable:project:98039fbb5c7388bf3783dca8756655924b40f359';
-
+            var pattern = 'noticeable:project:75887f8ad673b3757ebbf1ef7a906ffe02041b4c7cc803cec9bf13b63004db41';
             for (var key in localStorage) {
                 if (key.substr(0, pattern.length) === pattern) {
                     localStorage.removeItem(key);
                 }
             }
-
             location.reload();
         }
     </script>
 </head>
 <body unresolved>
-
 <div class="vertical-section-container centered">
-
     <h1>
-        <a href="https://noticeable.io"><img height="64" src="https://noticeable.io/es5-bundled/assets/images/manifest/icon-72x72.png" width="64"></a>
+        <a href="https://noticeable.io">
+            <img height="64"
+                 src="https://images.noticeable.cloud/manifest/icon-72x72.png"
+                 width="64"></a>
         <p>Noticeable</p>
     </h1>
     <h2>Widget samples</h2>
@@ -156,19 +178,18 @@
         implementation details using <a
                 href="https://developers.google.com/web/fundamentals/architecture/building-components/shadowdom"
                 title="Shadow DOM">Shadow DOM</a>.</p>
-
     <demo-snippet>
         <template>
-            <noticeable-widget access-token="YOUR_ACCESS_TOKEN"
-                               project-id="YOUR_PROJECT_ID"></noticeable-widget>
+            <noticeable-widget-popup access-token="YOUR_ACCESS_TOKEN"
+                               project-id="YOUR_PROJECT_ID"></noticeable-widget-popup>
         </template>
     </demo-snippet>
 
     <h3><a href="#custom-badge-style">Custom Badge Style</a></h3>
 
     <p>Styling the component requires to use <em>CSS mixins</em>. They are documented in the <a
-            href="https://widget.noticeable.io/v1/doc/#/elements/noticeable-widget"
-            target="noticeable-widget-documentation"
+            href="https://widget.noticeable.io/v1/doc/#/elements/noticeable-widget-popup"
+            target="noticeable-widget-popup-documentation"
             title="Noticeable Widget Documentation">Widget
         documentation</a>.
     </p>
@@ -185,7 +206,6 @@
                             font-size: 12px;
                             font-weight: bold;
                         };
-
                         --noticeable-widget-trigger-badge-enabled: {
                             background-image: -webkit-linear-gradient(90deg, rgba(255, 0, 102, 0) 20%, rgba(255, 0, 102, 0.0980392) 20%, rgba(255, 0, 102, 0.0980392) 40%, rgba(255, 0, 102, 0.2) 40%, rgba(255, 0, 102, 0.2) 60%, rgba(255, 0, 102, 0.4) 60%, rgba(255, 0, 102, 0.4) 80%, rgba(255, 0, 102, 0.6) 80%), -webkit-linear-gradient(180deg, rgba(255, 0, 102, 0) 20%, rgba(255, 0, 102, 0.0980392) 20%, rgba(255, 0, 102, 0.0980392) 40%, rgba(255, 0, 102, 0.2) 40%, rgba(255, 0, 102, 0.2) 60%, rgba(255, 0, 102, 0.4) 60%, rgba(255, 0, 102, 0.4) 80%, rgba(255, 0, 102, 0.6) 80%), linear-gradient(0deg, rgb(255, 204, 0) 0, rgb(255, 204, 0) 100%);
                             background-image: -moz-linear-gradient(0deg, rgba(255, 0, 102, 0) 20%, rgba(255, 0, 102, 0.0980392) 20%, rgba(255, 0, 102, 0.0980392) 40%, rgba(255, 0, 102, 0.2) 40%, rgba(255, 0, 102, 0.2) 60%, rgba(255, 0, 102, 0.4) 60%, rgba(255, 0, 102, 0.4) 80%, rgba(255, 0, 102, 0.6) 80%), -moz-linear-gradient(-90deg, rgba(255, 0, 102, 0) 20%, rgba(255, 0, 102, 0.0980392) 20%, rgba(255, 0, 102, 0.0980392) 40%, rgba(255, 0, 102, 0.2) 40%, rgba(255, 0, 102, 0.2) 60%, rgba(255, 0, 102, 0.4) 60%, rgba(255, 0, 102, 0.4) 80%, rgba(255, 0, 102, 0.6) 80%), linear-gradient(0deg, rgb(255, 204, 0) 0, rgb(255, 204, 0) 100%);
@@ -202,7 +222,6 @@
                             text-shadow: 0 0 4px #ff6356, 0 0 7px #ff6356, 0 0 8px #ff6356, 0 0 10px #ff6356;
                             width: 24px;
                         };
-
                         --noticeable-widget-trigger-badge-disabled: {
                             background-image: -webkit-linear-gradient(90deg, rgba(180, 180, 180, 0.7) 0, rgba(220, 220, 220, 0.7) 20%, rgba(180, 180, 180, 0.7) 20%, rgba(180, 180, 180, 0.7) 40%, rgba(140, 140, 140, 0.7) 40%, rgba(140, 140, 140, 0.7) 60%, rgba(90, 90, 90, 0.7) 60%, rgba(90, 90, 90, 0.7) 80%, rgba(40, 40, 40, 0.7) 80%, rgba(40, 40, 40, 0.7) 100%), -webkit-linear-gradient(180deg, rgba(255, 0, 102, 0) 0, rgba(220, 220, 220, 0.7) 20%, rgba(180, 180, 180, 0.7) 20%, rgba(180, 180, 180, 0.7) 40%, rgba(140, 140, 140, 0.7) 40%, rgba(140, 140, 140, 0.7) 60%, rgba(90, 90, 90, 0.7) 60%, rgba(90, 90, 90, 0.7) 80%, rgba(40, 40, 40, 0.7) 80%, rgba(0, 0, 0, 0.7) 100%);
                             background-image: -moz-linear-gradient(0deg, rgba(180, 180, 180, 0.7) 0, rgba(220, 220, 220, 0.7) 20%, rgba(180, 180, 180, 0.7) 20%, rgba(180, 180, 180, 0.7) 40%, rgba(140, 140, 140, 0.7) 40%, rgba(140, 140, 140, 0.7) 60%, rgba(90, 90, 90, 0.7) 60%, rgba(90, 90, 90, 0.7) 80%, rgba(40, 40, 40, 0.7) 80%, rgba(40, 40, 40, 0.7) 100%), -moz-linear-gradient(-90deg, rgba(255, 0, 102, 0) 0, rgba(220, 220, 220, 0.7) 20%, rgba(180, 180, 180, 0.7) 20%, rgba(180, 180, 180, 0.7) 40%, rgba(140, 140, 140, 0.7) 40%, rgba(140, 140, 140, 0.7) 60%, rgba(90, 90, 90, 0.7) 60%, rgba(90, 90, 90, 0.7) 80%, rgba(40, 40, 40, 0.7) 80%, rgba(0, 0, 0, 0.7) 100%);
@@ -221,11 +240,11 @@
                 </style>
             </custom-style>
 
-            <noticeable-widget access-token="YOUR_ACCESS_TOKEN"
+            <noticeable-widget-popup access-token="YOUR_ACCESS_TOKEN"
                                class="custom-badge"
                                project-id="YOUR_PROJECT_ID"
                                trigger-eye-catching="false">
-            </noticeable-widget>
+            </noticeable-widget-popup>
 
         </template>
     </demo-snippet>
@@ -233,11 +252,11 @@
     <h3><a href="#custom-trigger">Custom Trigger</a></h3>
 
     <p>
-        The widget element has <a href="https://widget.noticeable.io/v1/doc/#/elements/noticeable-widget#methods"
+        The widget element has <a href="https://widget.noticeable.io/v1/doc/#/elements/noticeable-widget-popup#methods"
                                   target="noticeable-widget-documentation"
                                   title="Noticeable Widget - Public methods">public methods</a> to perform actions
         but also <a
-            href="https://widget.noticeable.io/v1/doc/#/elements/noticeable-widget#properties"
+            href="https://widget.noticeable.io/v1/doc/#/elements/noticeable-widget-popup#properties"
             target="noticeable-widget-documentation"
             title="Noticeable Widget - Public properties">properties</a> to configure the layout and the behaviors.
         The example below makes use of the <code>popup-backdrop</code> attribute associated with the property
@@ -256,13 +275,13 @@
                 </style>
             </custom-style>
 
-            <noticeable-widget
+            <noticeable-widget-popup
                     id="custom-noticeable-widget"
                     access-token="YOUR_ACCESS_TOKEN"
                     project-id="YOUR_PROJECT_ID"
                     popup-backdrop="false">
                 <a title="What's new">What's new</a>
-            </noticeable-widget>
+            </noticeable-widget-popup>
         </template>
     </demo-snippet>
 
@@ -284,53 +303,42 @@
                             border: 3px solid #9673b8;
                             width: 410px;
                         };
-
                         --noticeable-widget-popup-header: {
                             border-bottom: 1px solid #843dab;
                             color: white;
                         };
-
                         --noticeable-widget-popup-content: {
                             background-color: white;
                             color: rgba(255, 255, 255, 0.76);
                         };
-
                         --noticeable-widget-popup-post-content-a: {
                             color: #f2547f;
                         };
-
                         --noticeable-widget-popup-footer-a: {
                             border-top: 1px solid #843dab;
                             color: rgba(255, 255, 255, 0.52);
                         };
-
                         --noticeable-widget-popup-entry-title: {
                             color: #f2547f;
                         };
-
                         --noticeable-widget-label: {
                             opacity: 0.9;
                         };
-
                         --noticeable-widget-popup-entry: {
                             border-bottom: 1px solid #eeeaff;
                         };
-
                         --noticeable-widget-popup-entry-hover: {
                             background-color: rgba(244, 163, 191, 0.24);
                         };
-
                         --noticeable-widget-popup-entry-read: {
                             background-color: rgba(200, 185, 244, 0.24);
                             color: #424242;
                             opacity: 0.5;
                             text-decoration: line-through;
                         };
-
                         --noticeable-widget-popup-post-header: {
                             color: white;
                         };
-
                         --noticeable-widget-popup-post-content: {
                             background-color: white;
                         }
@@ -338,7 +346,7 @@
                 </style>
             </custom-style>
 
-            <noticeable-widget
+            <noticeable-widget-popup
                     id="custom-noticeable-widget-popup"
                     access-token="YOUR_ACCESS_TOKEN"
                     project-id="YOUR_PROJECT_ID"
@@ -346,7 +354,7 @@
                     popup-footer="Company changelog"
                     popup-header="Latest changes"
                     post-excerpt-max-length="150"
-                    trigger-eye-catching="false"></noticeable-widget>
+                    trigger-eye-catching="false"></noticeable-widget-popup>
         </template>
     </demo-snippet>
 
@@ -354,8 +362,8 @@
 
     <p>
         The default eye-catching animation can be replaced by another one. This requires injecting a new CSS keyframe
-        definition in the <code>noticeable-widget</code> element by using its <a
-            href="https://widget.noticeable.io/v1/doc/#/elements/noticeable-widget#method-injectCSS"
+        definition in the <code>noticeable-widget-popup</code> element by using its <a
+            href="https://widget.noticeable.io/v1/doc/#/elements/noticeable-widget-popup#method-injectCSS"
             target="noticeable-widget-documentation"><code>injectCSS</code> method</a> with
         Javascript on page load:
     </p>
@@ -390,17 +398,16 @@
                             animation: pulse 1.8s;
                             animation-iteration-count: infinite;
                         };
-
                         --noticeable-widget-trigger-eye-catching-hover: {
                             animation: none;
                         };
                     }
                 </style>
             </custom-style>
-            <noticeable-widget
+            <noticeable-widget-popup
                     id="custom-eye-catching-animation"
                     access-token="YOUR_ACCESS_TOKEN"
-                    project-id="YOUR_PROJECT_ID"></noticeable-widget>
+                    project-id="YOUR_PROJECT_ID"></noticeable-widget-popup>
         </template>
     </demo-snippet>
 
@@ -412,6 +419,7 @@
     </p>
 
     <p>Have questions? Need help? reach us to <a href="mailto:support@noticeable.io">support@noticeable.io</a></p>
+
 </div>
 </body>
 </html>

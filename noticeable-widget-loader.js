@@ -1,10 +1,15 @@
+/**
+ * @license
+ * Copyright (c) 2017-2018 Noticeable. All rights reserved.
+ */
 (function () {
-    var d = document;
-    var head = d.getElementsByTagName('head')[0];
-    var prefix = 'https://dev.cdn.noticeable.io/v1/libs/';
-    var script = d.createElement('script');
+    const head = document.getElementsByTagName('head')[0];
+    const script = document.createElement('script');
 
     function importWebcomponentsLoader() {
+        import('node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js');
+        import('noticeable-widget-popup.js');
+
         var script2 = d.createElement('script');
         script2.src = prefix + 'webcomponentsjs/webcomponents-loader.js';
         script2.async = 1;

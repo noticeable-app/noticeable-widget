@@ -1,29 +1,39 @@
 {
-  "author": "Laurent Pellegrino",
+  "author": "Noticeable Team",
+  "description": "Noticeable Widgets",
+  "repository": "https://github.com/noticeableapp/noticeable-widget.git",
+  "homepage": "https://github.com/noticeableapp/noticeable-widget#readme",
   "bugs": {
     "url": "https://github.com/noticeableapp/noticeable-widget/issues"
   },
-  "description": "noticeable-widget",
+  "dependencies": {
+    "@polymer/iron-ajax": "^3.0.0-pre.21",
+    "@polymer/iron-dropdown": "^3.0.0-pre.21",
+    "@polymer/iron-iconset-svg": "^3.0.0-pre.21",
+    "@polymer/paper-icon-button": "^3.0.0-pre.21",
+    "@polymer/polymer": "^3.0.2",
+    "js-sha3": "^0.7.0",
+    "tinycolor2": "^1.4.1",
+    "twemoji": "^11.0.0"
+  },
   "devDependencies": {
-    "bower": "^1.8.4",
-    "firebase-tools": "^3.18.4"
+    "@polymer/iron-demo-helpers": "^3.0.0-pre.21",
+    "@webcomponents/webcomponentsjs": "^2.0.2"
   },
-  "homepage": "https://github.com/noticeableapp/noticeable-widget#readme",
   "license": "UNLICENSED",
-  "name": "noticeable-widget",
-  "private": true,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/noticeableapp/noticeable-widget.git"
-  },
+  "name": "@noticeable/widgets",
   "scripts": {
-    "clean": "rm -rf build/ public/v1/",
-    "build": "yarn run samples && yarn run doc && bower update && yarn run clean && polymer build",
-    "samples": "rm -rf samples/build && cd samples && yarn build",
-    "doc-analysis": "rm -rf doc/analysis.json && polymer analyze --input noticeable-widget.html > doc/analysis.json",
-    "doc": "yarn run doc-analysis && rm -rf doc/build && cd doc && yarn run build",
-    "package": "yarn run build && mkdir -p public/v1/{samples,doc} && touch public/index.html && touch public/404.html && cp -r build/es5-bundled/* public/v1/ && mv public/v1/bower_components public/v1/libs && mkdir -p public/v1/libs/noticeable-widget && mv public/v1/*.html public/v1/libs/noticeable-widget && cp post-samples.json public/v1/libs/noticeable-widget && cp -r samples/build/es5-bundled/* public/v1/samples && cp -r doc/build/es5-bundled/* public/v1/doc && uglifyjs noticeable-widget.js --mangle --compress -o public/v1/noticeable-widget.js",
-    "deploy": "yarn run package && firebase deploy"
+    "build": "polymer build",
+    "clean": "",
+    "demo": "cd ./demo/ && yarn run build",
+    "doc": "cd ./doc/ && yarn run build",
+    "deploy": "cd ./build/ && gcloud app deploy --project noticeable-widget-v2-dev --quiet --stop-previous-version",
+    "package": "cp ./appengine/* build/ && mkdir -p ./build/es{5,6,m}-bundled/doc; cp -r ./doc/build/es5-bundled/* ./build/es5-bundled/doc; cp -r ./doc/build/es6-bundled/* ./build/es6-bundled/doc; cp -r ./doc/build/esm-bundled/* ./build/esm-bundled/doc;",
+    "postbuild": "yarn run doc",
+    "postdeploy": "yarn run clean",
+    "prebuild": "yarn install",
+    "predeploy": "yarn run package",
+    "prepackage": "yarn run build"
   },
-  "version": "1.4.0"
+  "version": "2.0.0-alpha.1"
 }

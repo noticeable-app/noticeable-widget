@@ -3,15 +3,34 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-    <link rel="import" href="bower_components/iron-component-page/iron-component-page.html">
+    <title>Noticeable Widget Documentation</title>
+    <script type="module">
+        import '@polymer/iron-component-page/iron-component-page';
+    </script>
     <style type="text/css">
         iron-component-page {
             --iron-doc-accent-color: orange;
         }
+
+        h1 {
+            margin-bottom: 0;
+        }
+
+        h1, h2, h3 {
+            font-weight: 600;
+        }
+
+        p {
+            margin: 0 0 16px 0;
+        }
     </style>
 </head>
 <body>
+<noscript>
+    Please enable JavaScript to view this website.
+</noscript>
+<!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
+<script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 <iron-component-page></iron-component-page>
 </body>
 </html>

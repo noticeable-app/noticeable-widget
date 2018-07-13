@@ -1,0 +1,16 @@
+{
+  "name": "noticeable-widget-prpl-server",
+  "description": "PRPL Server package serving Noticeable widget related files.",
+  "version": "2.0.0",
+  "scripts": {
+    "start": "prpl-server --cache-control=3600 --host 0.0.0.0 --https-redirect"
+  },
+  "author": "Noticeable Team",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "prpl-server": "^1.2.0"
+  },
+  "engines": {
+    "node": "9.x"
+  }
+}

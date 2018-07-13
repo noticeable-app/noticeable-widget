@@ -56,7 +56,6 @@
   ],
   "entrypoint": "index.html",
   "extraDependencies": [
-    "analysis.json",
     "node_modules/@webcomponents/webcomponentsjs/**",
     "!node_modules/@webcomponents/webcomponentsjs/gulpfile.js",
     "node_modules/@webcomponents/webcomponentsjs/bundles/*.js"
@@ -66,5 +65,9 @@
       "polymer-3"
     ]
   },
+  "sources": [
+    "index.html"
+  ],
+  "moduleResolution": "node",
   "npm": true
 }

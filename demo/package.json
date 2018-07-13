@@ -1,0 +1,15 @@
+{
+  "author": "Laurent Pellegrino",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "build": "polymer build"
+  },
+  "version": "2.0.0",
+  "dependencies": {
+    "@polymer/iron-demo-helpers": "^3.0.0-pre.20"
+  },
+  "devDependencies": {
+    "@webcomponents/webcomponentsjs": "^2.0.2"
+  }
+}
