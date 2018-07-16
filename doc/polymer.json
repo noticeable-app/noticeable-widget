@@ -3,9 +3,7 @@
   "builds": [
     {
       "preset": "es5-bundled",
-      "insertPrefetchLinks": false,
-      "addPushManifest": false,
-      "addServiceWorker": false
+      "js": {"compile": false}
     }
   ],
   "sources": [
