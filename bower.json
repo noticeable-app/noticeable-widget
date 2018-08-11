@@ -30,6 +30,6 @@
     "voca": "panzerdp/voca#^1.4.0"
   },
   "devDependencies": {
-    "webcomponentsjs": "^1.2.2"
+    "webcomponentsjs": "^1.2.4"
   }
 }

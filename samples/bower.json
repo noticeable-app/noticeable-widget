@@ -19,7 +19,7 @@
     "polymer": "Polymer/polymer#^2.6.0"
   },
   "devDependencies": {
-    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.1.0",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.2.0"
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.1.2",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.2.4"
   }
 }

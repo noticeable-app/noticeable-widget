@@ -18,6 +18,6 @@
   },
   "devDependencies": {
     "iron-component-page": "^3.0.1",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.11"
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.2.4"
   }
 }
