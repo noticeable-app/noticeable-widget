@@ -24,7 +24,7 @@
 
             var errorListener = function (event) {
                 cleanup();
-                link.parentNode.removeChild(l);
+                link.parentNode.removeChild(link);
             };
 
             link.setAttribute('import-href', '');
