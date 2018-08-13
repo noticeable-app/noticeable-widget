@@ -15,7 +15,7 @@
     "tests"
   ],
   "dependencies": {
-    "noticeable-widget": "/home/lpellegr/Projects/noticeable/noticeable-widget/.git",
+    "noticeable-widget": "noticeableapp/noticeable-widget#dev",
     "polymer": "Polymer/polymer#^2.6.0"
   },
   "devDependencies": {
