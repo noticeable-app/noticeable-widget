@@ -15,7 +15,7 @@
     "tests"
   ],
   "dependencies": {
-    "noticeable-widget": "noticeableapp/noticeable-widget#dev",
+    "noticeable-widget": "noticeableapp/noticeable-widget#master",
     "polymer": "Polymer/polymer#^2.6.0"
   },
   "devDependencies": {
