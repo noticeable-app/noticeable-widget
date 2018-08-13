@@ -1,21 +1,19 @@
 (function () {
     var d = document;
-    var head = d.getElementsByTagName('head')[0];
+    var head = d.head;
     var prefix = 'https://cdn.noticeable.io/v1/libs/';
-    var script = d.createElement('script');
 
-    function importWebcomponentsLoader() {
-        var script2 = d.createElement('script');
-        script2.src = prefix + 'webcomponentsjs/webcomponents-loader.js';
-        script2.async = 1;
-        script2.onload = function () {
-            var link = document.createElement('link');
-            link.rel = 'import';
-            link.href = prefix + 'noticeable-widget/noticeable-widget.html';
+    function importWebcomponentsLoaderAndWidget() {
+        var webcomponentsLoaderScript = d.createElement('script');
+        webcomponentsLoaderScript.src = prefix + 'webcomponentsjs/webcomponents-loader.js';
+        webcomponentsLoaderScript.onload = function () {
+            var noticeableWidgetLink = document.createElement('link');
+            noticeableWidgetLink.rel = 'import';
+            noticeableWidgetLink.href = prefix + 'noticeable-widget/noticeable-widget.html';
 
             var cleanup = function () {
-                link.removeEventListener('load', loadListener);
-                link.removeEventListener('error', errorListener);
+                noticeableWidgetLink.removeEventListener('load', loadListener);
+                noticeableWidgetLink.removeEventListener('error', errorListener);
             };
 
             var loadListener = function (event) {
@@ -24,26 +22,28 @@
 
             var errorListener = function (event) {
                 cleanup();
-                link.parentNode.removeChild(link);
+                noticeableWidgetLink.parentNode.removeChild(noticeableWidgetLink);
             };
 
-            link.setAttribute('import-href', '');
-            link.addEventListener('load', loadListener);
-            link.addEventListener('error', errorListener);
+            noticeableWidgetLink.setAttribute('import-href', '');
+            noticeableWidgetLink.addEventListener('load', loadListener);
+            noticeableWidgetLink.addEventListener('error', errorListener);
 
-            d.head.appendChild(link);
+            head.appendChild(noticeableWidgetLink);
         };
-        head.appendChild(script2);
+
+        head.insertBefore(webcomponentsLoaderScript, head.firstChild);
     }
 
     if (window.customElements) {
-        script.src = prefix + 'webcomponentsjs/custom-elements-es5-adapter.js';
-        script.async = 1;
-        script.onload = function () {
-            importWebcomponentsLoader();
+        var customElementsAdapterScript = d.createElement('script');
+        customElementsAdapterScript.src = prefix + 'webcomponentsjs/custom-elements-es5-adapter.js';
+        customElementsAdapterScript.onload = function () {
+            importWebcomponentsLoaderAndWidget();
         };
-        head.appendChild(script);
+
+        head.insertBefore(customElementsAdapterScript, head.firstChild);
     } else {
-        importWebcomponentsLoader();
+        importWebcomponentsLoaderAndWidget();
     }
 })();
