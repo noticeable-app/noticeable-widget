@@ -5,6 +5,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
 <link rel="import" href="../polymer/polymer.html">
 
 <link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../iron-autogrow-textarea/iron-autogrow-textarea.html">
 <link rel="import" href="../iron-dropdown/iron-dropdown.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
 
@@ -260,13 +261,15 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 line-height: 1.4em;
                 max-height: 350px;
                 overflow-y: auto;
-                padding: 1px 16px;
+                padding-bottom: 8px;
                 word-wrap: break-word;
 
                 @apply --noticeable-widget-popup-post-content;
             }
 
             .post-content-value {
+                padding: 1px 16px;
+
                 @apply --noticeable-widget-popup-post-content-value;
             }
 
@@ -344,8 +347,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 border: 1px solid #e5e5e5;
                 border-radius: 4px;
                 display: inline-block;
-                margin-bottom: 15px;
-                margin-top: 8px;
+                margin: 4px 16px 16px 16px;
                 padding: 8px 12px;
 
                 @apply --noticeable-widget-popup-post-content-footer;
@@ -370,6 +372,77 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
 
             .post-content-footer a:visited {
                 @apply --noticeable-widget-popup-post-content-footer-a-visited;
+            }
+
+            .post-content-feedback {
+                padding: 0 16px 8px 16px;
+                position: relative;
+            }
+
+            .post-content-feedback paper-icon-button {
+                color: #424242;
+                display: none;
+                bottom: 16px;
+                position: absolute;
+                right: 20px;
+            }
+
+            .post-content-feedback paper-icon-button:hover {
+                color: var(--noticeable-widget-textarea-hover-color, #1e88e5);
+            }
+
+            .post-content-feedback iron-autogrow-textarea {
+                border: 1px solid #e5e5e5;
+                border-radius: 4px;
+                display: block;
+                width: auto;
+
+                --iron-autogrow-textarea: {
+                    box-sizing: border-box;
+                    padding: 16px;
+                };
+            }
+
+            .post-content-feedback:hover > iron-autogrow-textarea {
+                border: 1px solid transparent;
+                box-shadow: 0 0 5px var(--noticeable-widget-textarea-hover-color, #1e88e5);
+            }
+
+            .post-content-feedback-sent {
+                font-style: italic;
+                padding: 8px 16px 24px 16px;
+                text-align: center;
+            }
+
+            .post-content-reactions {
+                padding: 0 16px 8px 16px;
+                text-align: center;
+                user-select: none;
+            }
+
+            .post-content-reactions svg {
+                margin: 0 3px;
+                -webkit-transition: all 350ms cubic-bezier(.175, .885, .25, 1.5);
+                transition: all 350ms cubic-bezier(.175, .885, .25, 1.5);
+                width: 32px;
+            }
+
+            .post-content-reactions svg[selected=false] {
+                filter: grayscale(100%);
+            }
+
+            .post-content-reactions svg[selected=true] {
+                cursor: initial !important;
+                transform: scale(1.2);
+            }
+
+            .post-content-reactions svg:hover {
+                cursor: pointer;
+                transform: scale(1.2);
+            }
+
+            .post-content-reactions-title {
+                font-weight: 500;
             }
 
             .post-header {
@@ -655,11 +728,25 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 url="[[apiUrl]]"></iron-ajax>
 
         <iron-ajax
+                id="feedbackPostAjax"
+                content-type="application/x-www-form-urlencoded"
+                handle-as="text"
+                method="POST"
+                url="https://metrics.noticeable.io/feedback"></iron-ajax>
+
+        <iron-ajax
                 id="postSamplesAjax"
                 handle-as="json"
                 method="GET"
                 on-response="_loadDemonstrationData"
                 url="https://cdn.noticeable.io/v1/libs/noticeable-widget/post-samples.json"></iron-ajax>
+
+        <iron-ajax
+                id="reactionsPostAjax"
+                content-type="application/x-www-form-urlencoded"
+                handle-as="text"
+                method="POST"
+                url="https://metrics.noticeable.io/reactions"></iron-ajax>
 
         <iron-ajax
                 id="widgetTriggerClickAjax"
@@ -751,8 +838,10 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     <div>
                         <div class="post-header">
                             <div class="post-header-back">
-                                <paper-icon-button icon="noticeable-widget:arrow-back"
-                                                   on-tap="_showPosts"></paper-icon-button>
+                                <paper-icon-button
+                                        alt="Back"
+                                        icon="noticeable-widget:arrow-back"
+                                        on-tap="_showPosts"></paper-icon-button>
                             </div>
                             <div class="post-header-title">
                                 <a href="[[_postHeaderTitleLink(_post)]]"
@@ -765,7 +854,147 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         <div class="post-content">
                             <div class="post-content-value" inner-h-t-m-l="[[_post.content]]"></div>
 
-                            <template is="dom-if" if="[[postContentFooter]]">
+                            <template is="dom-if" if="[[_post.reactions]]">
+                                <div class="post-content-reactions">
+                                    <p class="post-content-reactions-title" hidden="[[!postReactionsTitle]]">[[postReactionsTitle]]</p>
+                                    <p>
+                                        <svg aria-labelledby="badReaction"
+                                             id="badReaction"
+                                             viewBox="0 0 47.5 47.5"
+                                             on-tap="_sendBadReaction"
+                                             role="img"
+                                             style="enable-background:new 0 0 47.5 47.5;"
+                                             version="1.1">
+                                            <title id="badReaction">[[postReactionsLegendBad]]</title>
+                                            <g transform="matrix(1.25,0,0,-1.25,0,47.5)">
+                                                <g>
+                                                    <g clip-path="url(#clipPath16)">
+                                                        <g transform="translate(36,19)">
+                                                            <path style="fill:#ffcc4d;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="m 0,0 c 0,-9.389 -7.611,-17 -17,-17 -9.389,0 -17,7.611 -17,17 0,9.389 7.611,17 17,17 C -7.611,17 0,9.389 0,0"/>
+                                                        </g>
+                                                        <g transform="translate(16,20)" id="g24">
+                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="m 0,0 c 0,-1.657 -0.895,-3 -2,-3 -1.104,0 -2,1.343 -2,3 0,1.657 0.896,3 2,3 1.105,0 2,-1.343 2,-3"/>
+                                                        </g>
+                                                        <g transform="translate(26,20)" id="g28">
+                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="m 0,0 c 0,-1.657 -0.895,-3 -2,-3 -1.104,0 -2,1.343 -2,3 0,1.657 0.896,3 2,3 1.105,0 2,-1.343 2,-3"/>
+                                                        </g>
+                                                        <g transform="translate(24.4854,8.1211)" id="g32">
+                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="m 0,0 c -0.012,0.044 -1.146,4.379 -5.485,4.379 -4.341,0 -5.475,-4.335 -5.485,-4.379 -0.053,-0.213 0.043,-0.431 0.231,-0.544 0.188,-0.112 0.433,-0.086 0.596,0.06 0.01,0.007 1.014,0.863 4.658,0.863 3.589,0 4.617,-0.83 4.656,-0.863 0.095,-0.09 0.219,-0.137 0.344,-0.137 0.084,0 0.169,0.021 0.246,0.064 C -0.043,-0.445 0.055,-0.218 0,0"/>
+                                                        </g>
+                                                        <g transform="translate(30,25)" id="g36">
+                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="m 0,0 c -5.554,0 -7.802,4.367 -7.895,4.553 -0.247,0.494 -0.046,1.095 0.448,1.342 0.493,0.246 1.092,0.047 1.34,-0.444 C -6.033,5.306 -4.287,2 0,2 0.553,2 1,1.552 1,1 1,0.448 0.553,0 0,0"/>
+                                                        </g>
+                                                        <g transform="translate(8,25)" id="g40">
+                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="M 0,0 C -0.552,0 -1,0.448 -1,1 -1,1.552 -0.552,2 0,2 5.083,2 5.996,5.12 6.033,5.253 6.178,5.781 6.725,6.101 7.252,5.962 7.782,5.823 8.103,5.289 7.97,4.757 7.921,4.563 6.704,0 0,0"/>
+                                                        </g>
+                                                    </g>
+                                                </g>
+                                            </g>
+                                        </svg>
+
+                                        <svg aria-labelledby="neutralReaction"
+                                             id="neutralReaction"
+                                             on-tap="_sendNeutralReaction"
+                                             role="img"
+                                             style="enable-background:new 0 0 47.5 47.5;"
+                                             version="1.1"
+                                             viewBox="0 0 47.5 47.5">
+                                            <title id="neutralReaction">[[postReactionsLegendNeutral]]</title>
+                                            <g transform="matrix(1.25,0,0,-1.25,0,47.5)">
+                                                <g>
+                                                    <g clip-path="url(#clipPath16)">
+                                                        <g transform="translate(36,19)">
+                                                            <path style="fill:#ffcc4d;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="m 0,0 c 0,-9.389 -7.611,-17 -17,-17 -9.388,0 -17,7.611 -17,17 0,9.388 7.612,17 17,17 C -7.611,17 0,9.388 0,0"/>
+                                                        </g>
+                                                        <g transform="translate(15,20.5)" id="g24">
+                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="M 0,0 C 0,-1.934 -1.119,-3.5 -2.5,-3.5 -3.881,-3.5 -5,-1.934 -5,0 -5,1.933 -3.881,3.5 -2.5,3.5 -1.119,3.5 0,1.933 0,0"/>
+                                                        </g>
+                                                        <g transform="translate(28,20.5)" id="g28">
+                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="M 0,0 C 0,-1.934 -1.119,-3.5 -2.5,-3.5 -3.881,-3.5 -5,-1.934 -5,0 -5,1.933 -3.881,3.5 -2.5,3.5 -1.119,3.5 0,1.933 0,0"/>
+                                                        </g>
+                                                        <g transform="translate(26,11)" id="g32">
+                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="m 0,0 -14,0 c -0.552,0 -1,0.447 -1,1 0,0.553 0.448,1 1,1 L 0,2 C 0.553,2 1,1.553 1,1 1,0.447 0.553,0 0,0"/>
+                                                        </g>
+                                                    </g>
+                                                </g>
+                                            </g>
+                                        </svg>
+
+                                        <svg aria-labelledby="goodReaction"
+                                             id="goodReaction"
+                                             on-tap="_sendGoodReaction"
+                                             role="img"
+                                             style="enable-background:new 0 0 47.5 47.5;"
+                                             version="1.1"
+                                             viewBox="0 0 47.5 47.5">
+                                            <title id="goodReaction">[[postReactionsLegendGood]]</title>
+                                            <g transform="matrix(1.25,0,0,-1.25,0,47.5)">
+                                                <g>
+                                                    <g clip-path="url(#clipPath16)">
+                                                        <g transform="translate(36,19)">
+                                                            <path id="path22"
+                                                                  style="fill:#ffcc4d;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="m 0,0 c 0,-9.389 -7.611,-17 -17,-17 -9.388,0 -17,7.611 -17,17 0,9.388 7.612,17 17,17 C -7.611,17 0,9.388 0,0"/>
+                                                        </g>
+                                                        <g transform="translate(15,24.5)">
+                                                            <path id="path26"
+                                                                  style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="M 0,0 C 0,-2.486 -1.119,-5.5 -2.5,-5.5 -3.881,-5.5 -5,-2.486 -5,0 -5,2.485 -3.881,5.5 -2.5,5.5 -1.119,5.5 0,2.485 0,0"/>
+                                                        </g>
+                                                        <g transform="translate(28,24.5)">
+                                                            <path id="path30"
+                                                                  style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="M 0,0 C 0,-2.486 -1.119,-5.5 -2.5,-5.5 -3.881,-5.5 -5,-2.486 -5,0 -5,2.485 -3.881,5.5 -2.5,5.5 -1.119,5.5 0,2.485 0,0"/>
+                                                        </g>
+                                                        <g transform="translate(19,15)">
+                                                            <path id="path34"
+                                                                  style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="m 0,0 c -3.623,0 -6.027,0.422 -9,1 -0.679,0.131 -2,0 -2,-2 0,-4 4.595,-9 11,-9 6.404,0 11,5 11,9 C 11,1 9.679,1.132 9,1 6.027,0.422 3.623,0 0,0"/>
+                                                        </g>
+                                                        <g transform="translate(10,14)">
+                                                            <path id="path38"
+                                                                  style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+                                                                  d="m 0,0 c 0,0 3,-1 9,-1 6,0 9,1 9,1 0,0 -2,-4 -9,-4 -7,0 -9,4 -9,4"/>
+                                                        </g>
+                                                    </g>
+                                                </g>
+                                            </g>
+                                        </svg>
+                                    </p>
+                                </div>
+                            </template>
+
+                            <template is="dom-if" if="[[_displayFeedbackForm]]">
+                                <div class="post-content-feedback">
+                                    <iron-autogrow-textarea
+                                            rows="4"
+                                            placeholder="[[postFeedbackTextareaPlaceholder]]"
+                                            value="{{_feedbackComment}}"></iron-autogrow-textarea>
+                                    <paper-icon-button
+                                            alt="Send"
+                                            id="sendFeedback"
+                                            icon="noticeable-widget:send"
+                                            on-tap="_sendFeedback"></paper-icon-button>
+                                </div>
+                            </template>
+
+                            <template is="dom-if" if="[[_displayFeedbackSentMessage]]">
+                                <div class="post-content-feedback-sent" hidden="[[!postFeedbackSentMessage]]">
+                                    [[postFeedbackSentMessage]]
+                                </div>
+                            </template>
+
+                            <template is="dom-if" if="[[_displayPostContentFooter]]">
                                 <div class="post-content-footer">
                                     <a href="[[_timelineUrl]]/posts/[[_post.slug]]"
                                        target="noticeable-post"
@@ -1093,6 +1322,60 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         value: undefined
                     },
                     /**
+                     * The text to display above the feedback textarea form.
+                     *
+                     * The default value is _empty_.
+                     */
+                    postFeedbackTextareaPlaceholder: {
+                        type: String,
+                        value: undefined
+                    },
+                    /**
+                     * The text to display once the feedback form is submitted.
+                     *
+                     * The default value is _empty_.
+                     */
+                    postFeedbackSentMessage: {
+                        type: String,
+                        value: undefined
+                    },
+                    /**
+                     * The text to display above the emojis reaction icons.
+                     *
+                     * The default value is _empty_.
+                     */
+                    postReactionsTitle: {
+                        type: String,
+                        value: undefined
+                    },
+                    /**
+                     * The text associated with the 'bad' emoji reaction.
+                     *
+                     * The default value is _empty_.
+                     */
+                    postReactionsLegendBad: {
+                        type: String,
+                        value: undefined
+                    },
+                    /**
+                     * The text associated with the 'neutral' emoji reaction.
+                     *
+                     * The default value is _empty_.
+                     */
+                    postReactionsLegendNeutral: {
+                        type: String,
+                        value: undefined
+                    },
+                    /**
+                     * The text associated with the 'good' emoji reaction.
+                     *
+                     * The default value is _empty_.
+                     */
+                    postReactionsLegendGood: {
+                        type: String,
+                        value: undefined
+                    },
+                    /**
                      * Defines the maximum number of characters for post summaries.
                      *
                      * Allowed values are between _0_ and _240_. The default value is _140_.
@@ -1206,6 +1489,19 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     _dataLoaded: {
                         type: Boolean,
                         value: false,
+                    },
+                    _displayFeedbackForm: {
+                        type: Boolean
+                    },
+                    _displayFeedbackSentMessage: {
+                        type: Boolean
+                    },
+                    _displayPostContentFooter: {
+                        type: Boolean,
+                    },
+                    _feedbackComment: {
+                        observer: '_onFeedbackCommentChange',
+                        type: String
                     },
                     _graphqlQuery: {
                         type: String
@@ -1456,6 +1752,15 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 }
             }
 
+            _onFeedbackCommentChange(comment) {
+                const paperIconButton = this.shadowRoot.querySelector('#sendFeedback');
+
+                if (paperIconButton) {
+                    paperIconButton.style.display =
+                        !comment || comment.trim().length === 0 ? 'none' : 'block';
+                }
+            }
+
             _updateBadge(isBadgeAlreadyVisible) {
                 if (this.triggerDisplayAfter > 0) {
                     setTimeout(() => {
@@ -1471,7 +1776,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             }
 
             _emojify(text) {
-                if (typeof twemoji === 'undefined' || window.ShadyDOM !== undefined) {
+                if (typeof twemoji === 'undefined') {
                     return text;
                 }
 
@@ -1540,7 +1845,8 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     const hexString = accentColor.toHexString();
                     this.updateStyles({
                         '--noticeable-widget-popup-entry-unread-border-color': hexString,
-                        '--noticeable-widget-post-content-link-color': hexString
+                        '--noticeable-widget-post-content-link-color': hexString,
+                        '--noticeable-widget-textarea-hover-color': hexString
                     });
                 }
 
@@ -1713,6 +2019,36 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     (settings => settings.texts.postViewMoreButton), 'View more'
                 );
 
+                this.postFeedbackTextareaPlaceholder = this._selectPropertyValue(
+                    this.postFeedbackTextareaPlaceholder, remoteWidgetSettings,
+                    (settings => settings.texts.postFeedbackTextareaPlaceholder), 'Send us your feedback.'
+                );
+
+                this.postFeedbackSentMessage = this._selectPropertyValue(
+                    this.postFeedbackSentMessage, remoteWidgetSettings,
+                    (settings => settings.texts.postFeedbackSentMessage), 'Thanks for your feedback!'
+                );
+
+                this.postReactionsTitle = this._selectPropertyValue(
+                    this.postReactionsTitle, remoteWidgetSettings,
+                    (settings => settings.texts.postReactionsTitle), 'Did you like this update?'
+                );
+
+                this.postReactionsLegendBad = this._selectPropertyValue(
+                    this.postReactionsLegendBad, remoteWidgetSettings,
+                    (settings => settings.texts.postReactionsLegendBad), 'Negative'
+                );
+
+                this.postReactionsLegendNeutral = this._selectPropertyValue(
+                    this.postReactionsLegendNeutral, remoteWidgetSettings,
+                    (settings => settings.texts.postReactionsLegendNeutral), 'Neutral'
+                );
+
+                this.postReactionsLegendGood = this._selectPropertyValue(
+                    this.postReactionsLegendGood, remoteWidgetSettings,
+                    (settings => settings.texts.postReactionsLegendGood), 'Positive'
+                );
+
                 this.triggerDisplayAfter = this._selectPropertyValue(
                     this.triggerDisplayAfter, remoteWidgetSettings,
                     (settings => settings.trigger.displayAfter), 0
@@ -1772,7 +2108,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     }
 
                     const params = {
-                        query: "{ project(id:\"" + this.projectId + "\") { accentColor posts(before: \"now\" isDraft: false last:9 " + segments + ") { edges { node { content { html } excerpt id labels { color name } publicationTime slug title } } } timeline { customDomain { name verified } } widget { autoRefresh closeOnEscKey closeOnOutsideClick fetchLimit markAsSeenAfter opened popup { allowOutsideScroll footer header horizontalAlign horizontalOffset useDynamicAlign verticalAlign verticalOffset withBackdrop } postExcerptMaxLength postExcerptTarget texts { postViewMoreButton } trigger { displayAfter displayCounter useEyeCatching useSoftHide } useWhiteLabel } } }"
+                        query: "{ project(id:\"" + this.projectId + "\") { accentColor posts(before: \"now\" isDraft: false last:9 " + segments + ") { edges { node { content { html } excerpt hiddenComments id labels { color name } publicationTime reactions slug title } } } timeline { customDomain { name verified } } widget { autoRefresh closeOnEscKey closeOnOutsideClick fetchLimit markAsSeenAfter opened popup { allowOutsideScroll footer header horizontalAlign horizontalOffset useDynamicAlign verticalAlign verticalOffset withBackdrop } postExcerptMaxLength postExcerptTarget texts { postFeedbackTextareaPlaceholder postFeedbackSentMessage postReactionsTitle postReactionsLegendBad postReactionsLegendNeutral postReactionsLegendGood postViewMoreButton } trigger { displayAfter displayCounter useEyeCatching useSoftHide } useWhiteLabel } } }"
                     };
 
                     if (this.noCache) {
@@ -1883,6 +2219,22 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     }
 
                     this.$['sliding-pages'].next();
+                    this.$['sliding-pages'].scrollTop();
+
+                    setTimeout(() => {
+                        const feedback = this._getLocalStorageItem('feedback:' + postId);
+                        const reaction = this._getLocalStorageItem('reaction:' + postId);
+
+                        if (reaction) {
+                            this._selectReaction(reaction);
+                        }
+
+                        this._displayFeedbackForm = this._post.hiddenComments && !feedback;
+                        this._displayFeedbackSentMessage = false;
+                        this._displayPostContentFooter =
+                            this.postContentFooter && !this._post.hiddenComments && !this._post.reactions;
+                        this._feedbackComment = '';
+                    }, 0);
                 }
             }
 
@@ -1914,6 +2266,52 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 } else {
                     return localDef;
                 }
+            }
+
+            _sendFeedback(event) {
+                const postId = this._post.id;
+
+                this.$.feedbackPostAjax.body =
+                    'p=' + this.projectId + '&m=' + postId + '&c=' + this._feedbackComment;
+                this.$.feedbackPostAjax.generateRequest();
+
+                this._setLocalStorageItem('feedback:' + postId, new Date());
+
+                this._displayFeedbackForm = false;
+                this._displayFeedbackSentMessage = true;
+                this._feedbackComment = '';
+            }
+
+            _sendBadReaction(event) {
+                this._sendReaction(event, 'bad');
+            }
+
+            _sendNeutralReaction(event) {
+                this._sendReaction(event, 'neutral');
+            }
+
+            _sendGoodReaction(event) {
+                this._sendReaction(event, 'good');
+            }
+
+            _sendReaction(event, value) {
+                const emojiButton = this.shadowRoot.querySelector('#' + value + 'Reaction');
+
+                if (emojiButton && emojiButton.getAttribute('selected') !== 'true') {
+                    const postId = this._post.id;
+
+                    this.$.reactionsPostAjax.body = 'p=' + this.projectId + '&m=' + postId + '&r=' + value;
+                    this.$.reactionsPostAjax.generateRequest();
+
+                    this._setLocalStorageItem('reaction:' + postId, value);
+                    this._selectReaction(value);
+                }
+            }
+
+            _selectReaction(value) {
+                this.shadowRoot.querySelector('#badReaction').setAttribute('selected', 'bad' === value);
+                this.shadowRoot.querySelector('#neutralReaction').setAttribute('selected', 'neutral' === value);
+                this.shadowRoot.querySelector('#goodReaction').setAttribute('selected', 'good' === value);
             }
 
             _showBadgeCounter(triggerDisplayCounter, postCount) {

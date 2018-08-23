@@ -102,39 +102,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 this.selected = this.firstElementChild;
             }
 
-            _installListeners() {
-                this.addEventListener('transitionend', this._resetChildrenStyles.bind(this));
-            }
-
-            _resetChildrenStyles() {
-                
-                this._scrollTop();
-
-                let elem = this.firstElementChild;
-
-                while (elem) {
-                    elem.style.display = '';
-                    elem.style.position = '';
-                    elem.style.transition = '';
-                    elem.style.transform = '';
-                    elem = elem.nextElementSibling;
-                }
-
-                /**
-                 * Fired when the active page changes.
-                 *
-                 * @event page-change
-                 */
-                this.dispatchEvent(new CustomEvent('page-change'));
-            }
-
-            _resetSelected() {
-                if (!this.selected || this.selected.parentElement !== this) {
-                    this.selected = this.firstElementChild;
-                }
-            }
-
-            _scrollTop() {
+            scrollTop() {
                 try {
                     const slotNodes = this.$.slot.assignedNodes();
 
@@ -156,6 +124,35 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     }
                 } catch (error) {
                     console.error(error);
+                }
+            }
+
+            _installListeners() {
+                this.addEventListener('transitionend', this._resetChildrenStyles.bind(this));
+            }
+
+            _resetChildrenStyles(event) {
+                let elem = this.firstElementChild;
+
+                while (elem) {
+                    elem.style.display = '';
+                    elem.style.position = '';
+                    elem.style.transition = '';
+                    elem.style.transform = '';
+                    elem = elem.nextElementSibling;
+                }
+
+                /**
+                 * Fired when the active page changes.
+                 *
+                 * @event page-change
+                 */
+                this.dispatchEvent(new CustomEvent('page-change'));
+            }
+
+            _resetSelected() {
+                if (!this.selected || this.selected.parentElement !== this) {
+                    this.selected = this.firstElementChild;
                 }
             }
 
