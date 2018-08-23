@@ -26,5 +26,5 @@
     "package": "yarn run build && mkdir -p public/v1/{samples,doc} && touch public/index.html && touch public/404.html && cp -r build/es5-bundled/* public/v1/ && mv public/v1/bower_components public/v1/libs && mkdir -p public/v1/libs/noticeable-widget && mv public/v1/*.html public/v1/libs/noticeable-widget && cp post-samples.json public/v1/libs/noticeable-widget && cp -r samples/build/es5-bundled/* public/v1/samples && cp -r doc/build/es5-bundled/* public/v1/doc && uglifyjs noticeable-widget.js --mangle --compress -o public/v1/noticeable-widget.js",
     "deploy": "yarn run package && firebase deploy"
   },
-  "version": "1.5.0"
+  "version": "1.5.1"
 }
