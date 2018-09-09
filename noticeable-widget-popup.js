@@ -822,18 +822,18 @@ class NoticeableWidgetPopup extends PolymerElement {
                 content-type="application/x-www-form-urlencoded"
                 handle-as="text"
                 method="POST"
-                url="https://metrics.noticeable.io/feedback"></iron-ajax>
+                url="[[metricsUrl]]/feedback"></iron-ajax>
 
         <iron-ajax
                 id="reactionsPostAjax"
                 content-type="application/x-www-form-urlencoded"
                 handle-as="text"
                 method="POST"
-                url="https://metrics.noticeable.io/reactions"></iron-ajax>
+                url="[[metricsUrl]]/reactions"></iron-ajax>
 
-        <iron-ajax id="widgetTriggerClickAjax" content-type="application/x-www-form-urlencoded" handle-as="text" method="POST" timeout="3000" url="[[_env.endpoints.metrics]]/clicks/widget/trigger"></iron-ajax>
+        <iron-ajax id="widgetTriggerClickAjax" content-type="application/x-www-form-urlencoded" handle-as="text" method="POST" timeout="3000" url="[[metricsUrl]]/clicks/widget/trigger"></iron-ajax>
 
-        <iron-ajax id="widgetViewPostAjax" content-type="application/x-www-form-urlencoded" handle-as="text" method="POST" timeout="3000" url="[[_env.endpoints.metrics]]/views/widget/post"></iron-ajax>
+        <iron-ajax id="widgetViewPostAjax" content-type="application/x-www-form-urlencoded" handle-as="text" method="POST" timeout="3000" url="[[metricsUrl]]/views/widget/post"></iron-ajax>
 
         <div id="trigger" on-click="toggle" slot="dropdown-trigger">
             <slot></slot>
@@ -1024,6 +1024,13 @@ class NoticeableWidgetPopup extends PolymerElement {
             markAsSeenAfter: {
                 type: Number,
                 value: undefined
+            },
+            /**
+             * The API URL used for collecting metrics.
+             */
+            metricsUrl: {
+                type: String,
+                value: env.endpoints.metrics
             },
             /**
              * When enabled, all widget requests go straight to Noticeable servers bypassing caching layers.
@@ -1264,6 +1271,13 @@ class NoticeableWidgetPopup extends PolymerElement {
             skipRemoteSettings: {
                 type: Object,
                 value: false
+            },
+            /**
+             * The default URL used for redirecting to the Timeline.
+             */
+            timelineUrl: {
+                type: String,
+                value: env.endpoints.timeline
             },
             /**
              * Defines whether the trigger must include the number of posts which have not yet been seen.
@@ -1570,7 +1584,7 @@ class NoticeableWidgetPopup extends PolymerElement {
         if (customDomain && customDomain.verified) {
             return `https://${customDomain.name}`;
         } else {
-            return `${env.endpoints.timeline}/${this.projectId}`;
+            return `${this.timelineUrl}/${this.projectId}`;
         }
     }
 
