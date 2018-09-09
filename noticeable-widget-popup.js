@@ -881,7 +881,7 @@ class NoticeableWidgetPopup extends PolymerElement {
                     <div>
                         <div class="post-header">
                             <div class="post-header-back">
-                                <paper-icon-button alt="Back" icon="noticeable-widget:arrow-back" on-tap="_showPosts"></paper-icon-button>
+                                <paper-icon-button alt="[[postBackLink]]" icon="noticeable-widget:arrow-back" on-tap="_showPosts"></paper-icon-button>
                             </div>
                             <div class="post-header-title">
                                 <a href="[[_postHeaderTitleLink(_post)]]" inner-h-t-m-l="[[_post.title]]" target="noticeable-post" title="[[_post.rawTitle]]"></a>
@@ -1254,38 +1254,44 @@ class NoticeableWidgetPopup extends PolymerElement {
                 value: undefined,
             },
             /**
+             * The text associated with button to move back to the post list from a post.
+             */
+            postBackLink: {
+                type: String,
+                value: undefined
+            },
+            /**
              * The text to display at the bottom of a post content.
              * If not empty, clicking on the text opens the post on the timeline.
              * If empty, then nothing appears.
-             *
-             * The default value is _empty_.
              */
             postContentFooter: {
                 type: String,
                 value: undefined
             },
             /**
-             * The text to display above the feedback textarea form.
-             *
-             * The default value is _empty_.
+             * The label associated with the button used to send feedback.
              */
-            postFeedbackTextareaPlaceholder: {
+            postFeedbackSendButtonLabel: {
                 type: String,
                 value: undefined
             },
             /**
              * The text to display once the feedback form is submitted.
-             *
-             * The default value is _empty_.
              */
             postFeedbackSentMessage: {
                 type: String,
                 value: undefined
             },
             /**
+             * The text to display above the feedback textarea form.
+             */
+            postFeedbackTextareaPlaceholder: {
+                type: String,
+                value: undefined
+            },
+            /**
              * The text to display above the emojis reaction icons.
-             *
-             * The default value is _empty_.
              */
             postReactionsTitle: {
                 type: String,
@@ -1293,8 +1299,6 @@ class NoticeableWidgetPopup extends PolymerElement {
             },
             /**
              * The text associated with the 'bad' emoji reaction.
-             *
-             * The default value is _empty_.
              */
             postReactionsLegendBad: {
                 type: String,
@@ -1302,8 +1306,6 @@ class NoticeableWidgetPopup extends PolymerElement {
             },
             /**
              * The text associated with the 'neutral' emoji reaction.
-             *
-             * The default value is _empty_.
              */
             postReactionsLegendNeutral: {
                 type: String,
@@ -1311,8 +1313,6 @@ class NoticeableWidgetPopup extends PolymerElement {
             },
             /**
              * The text associated with the 'good' emoji reaction.
-             *
-             * The default value is _empty_.
              */
             postReactionsLegendGood: {
                 type: String,
@@ -1987,26 +1987,41 @@ class NoticeableWidgetPopup extends PolymerElement {
             (settings => settings.texts.postViewMoreButton), 'View more'
         );
 
-        this.postFeedbackTextareaPlaceholder = this._selectPropertyValue(
-            this.postFeedbackTextareaPlaceholder, remoteWidgetSettings,
-            (settings => settings.texts.postFeedbackTextareaPlaceholder), 'Send us your feedback.'
+        this.postBackLink = this._selectPropertyValue(
+            this.postBackLink, remoteWidgetSettings,
+            (settings => settings.texts.postBackLink), 'Back'
         );
+
+        this.postFeedbackSendButtonLabel = this._selectPropertyValue(
+            this.postFeedbackSendButtonLabel, remoteWidgetSettings,
+            (settings => settings.texts.postFeedbackSendButtonLabel), 'Send'
+        );
+
         this.postFeedbackSentMessage = this._selectPropertyValue(
             this.postFeedbackSentMessage, remoteWidgetSettings,
             (settings => settings.texts.postFeedbackSentMessage), 'Thanks for your feedback!'
         );
+
+        this.postFeedbackTextareaPlaceholder = this._selectPropertyValue(
+            this.postFeedbackTextareaPlaceholder, remoteWidgetSettings,
+            (settings => settings.texts.postFeedbackTextareaPlaceholder), 'Send us your feedback.'
+        );
+
         this.postReactionsTitle = this._selectPropertyValue(
             this.postReactionsTitle, remoteWidgetSettings,
             (settings => settings.texts.postReactionsTitle), 'Did you like this update?'
         );
+
         this.postReactionsLegendBad = this._selectPropertyValue(
             this.postReactionsLegendBad, remoteWidgetSettings,
             (settings => settings.texts.postReactionsLegendBad), 'Negative'
         );
+
         this.postReactionsLegendNeutral = this._selectPropertyValue(
             this.postReactionsLegendNeutral, remoteWidgetSettings,
             (settings => settings.texts.postReactionsLegendNeutral), 'Neutral'
         );
+
         this.postReactionsLegendGood = this._selectPropertyValue(
             this.postReactionsLegendGood, remoteWidgetSettings,
             (settings => settings.texts.postReactionsLegendGood), 'Positive'
@@ -2071,7 +2086,7 @@ class NoticeableWidgetPopup extends PolymerElement {
             }
 
             const params = {
-                query: "{ project(id:\"" + this.projectId + "\") { accentColor posts(before: \"now\" isDraft: false last:9 " + segments + ") { edges { node { content { html } excerpt hiddenComments id labels { color name } publicationTime reactions slug title } } } timeline { customDomain { name verified } } widget { autoRefresh closeOnEscKey closeOnOutsideClick fetchLimit markAsSeenAfter opened popup { allowOutsideScroll footer header horizontalAlign horizontalOffset useDynamicAlign verticalAlign verticalOffset withBackdrop } postExcerptMaxLength postExcerptTarget texts { postFeedbackTextareaPlaceholder postFeedbackSentMessage postReactionsTitle postReactionsLegendBad postReactionsLegendNeutral postReactionsLegendGood postViewMoreButton } trigger { displayAfter displayCounter useEyeCatching useSoftHide } useWhiteLabel } } }"
+                query: "{ project(id:\"" + this.projectId + "\") { accentColor posts(before: \"now\" isDraft: false last:9 " + segments + ") { edges { node { content { html } excerpt hiddenComments id labels { color name } publicationTime reactions slug title } } } timeline { customDomain { name verified } } widget { autoRefresh closeOnEscKey closeOnOutsideClick fetchLimit markAsSeenAfter opened popup { allowOutsideScroll footer header horizontalAlign horizontalOffset useDynamicAlign verticalAlign verticalOffset withBackdrop } postExcerptMaxLength postExcerptTarget texts { postBackLink postFeedbackSendButtonLabel postFeedbackSentMessage postFeedbackTextareaPlaceholder postReactionsTitle postReactionsLegendBad postReactionsLegendNeutral postReactionsLegendGood postViewMoreButton } trigger { displayAfter displayCounter useEyeCatching useSoftHide } useWhiteLabel } } }"
             };
 
             if (this.noCache) {
@@ -2236,7 +2251,7 @@ class NoticeableWidgetPopup extends PolymerElement {
         let userData;
         try {
             userData = JSON.parse(sessionStorage.getItem('noticeable:session'));
-        } catch(error) {
+        } catch (error) {
             userData = null;
         }
         if (userData) {
