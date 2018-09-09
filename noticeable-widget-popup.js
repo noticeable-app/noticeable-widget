@@ -2231,23 +2231,51 @@ class NoticeableWidgetPopup extends PolymerElement {
 
     _sendFeedback(event) {
         const postId = this._post.id;
-        this.$.feedbackPostAjax.body =
-            'p=' + this.projectId + '&m=' + postId + '&c=' + this._feedbackComment;
+
+        let body = 'p=' + this.projectId + '&m=' + postId + '&c=' + this._feedbackComment;
+        let userData;
+        try {
+            userData = JSON.parse(sessionStorage.getItem('noticeable:session'));
+        } catch(error) {
+            userData = null;
+        }
+        if (userData) {
+            if (userData.avatarUrl) {
+                body += '&ua=' + userData.avatarUrl;
+            }
+            if (userData.email) {
+                body += '&ue=' + userData.email;
+            }
+            if (userData.id) {
+                body += '&ui=' + userData.id;
+            }
+            if (userData.name) {
+                body += '&un=' + userData.name;
+            }
+        }
+
+        this.$.feedbackPostAjax.body = body;
         this.$.feedbackPostAjax.generateRequest();
+
         this._setLocalStorageItem('feedback:' + postId, new Date());
+
         this._displayFeedbackForm = false;
         this._displayFeedbackSentMessage = true;
         this._feedbackComment = '';
     }
+
     _sendBadReaction(event) {
         this._sendReaction(event, 'bad');
     }
+
     _sendNeutralReaction(event) {
         this._sendReaction(event, 'neutral');
     }
+
     _sendGoodReaction(event) {
         this._sendReaction(event, 'good');
     }
+
     _sendReaction(event, value) {
         const emojiButton = this.shadowRoot.querySelector('#' + value + 'Reaction');
         if (emojiButton && emojiButton.getAttribute('selected') !== 'true') {
@@ -2258,6 +2286,7 @@ class NoticeableWidgetPopup extends PolymerElement {
             this._selectReaction(value);
         }
     }
+
     _selectReaction(value) {
         this.shadowRoot.querySelector('#badReaction').setAttribute('selected', 'bad' === value);
         this.shadowRoot.querySelector('#neutralReaction').setAttribute('selected', 'neutral' === value);
