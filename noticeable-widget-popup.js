@@ -935,7 +935,7 @@ class NoticeableWidgetPopup extends PolymerElement {
                                 </div>
                             </template>
 
-                            <template is="dom-if" if="[[postContentFooter]]">
+                            <template is="dom-if" if="[[_displayPostContentFooter]]">
                                 <div class="post-content-footer">
                                     <a href="[[_timelineUrl]]/posts/[[_post.slug]]" target="noticeable-post" title="[[postContentFooter]]">[[postContentFooter]]</a>
                                 </div>
