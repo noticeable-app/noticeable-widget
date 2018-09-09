@@ -515,23 +515,23 @@ class NoticeableWidgetPopup extends PolymerElement {
                 user-select: none;
             }
             
-            .post-content-reactions svg {
+            .post-content-reactions img {
                 margin: 0 3px;
                 -webkit-transition: all 350ms cubic-bezier(.175, .885, .25, 1.5);
                 transition: all 350ms cubic-bezier(.175, .885, .25, 1.5);
                 width: 32px;
             }
             
-            .post-content-reactions svg[selected=false] {
+            .post-content-reactions img[selected=false] {
                 filter: grayscale(100%);
             }
             
-            .post-content-reactions svg[selected=true] {
+            .post-content-reactions img[selected=true] {
                 cursor: initial !important;
                 transform: scale(1.2);
             }
             
-            .post-content-reactions svg:hover {
+            .post-content-reactions img:hover {
                 cursor: pointer;
                 transform: scale(1.2);
             }
@@ -895,118 +895,20 @@ class NoticeableWidgetPopup extends PolymerElement {
                                 <div class="post-content-reactions">
                                     <p class="post-content-reactions-title" hidden="[[!postReactionsTitle]]">[[postReactionsTitle]]</p>
                                     <p>
-                                        <svg aria-labelledby="badReaction"
+                                        <img aria-labelledby="badReaction"
                                              id="badReaction"
-                                             viewBox="0 0 47.5 47.5"
                                              on-tap="_sendBadReaction"
-                                             role="img"
-                                             style="enable-background:new 0 0 47.5 47.5;"
-                                             version="1.1">
-                                            <title id="badReaction">[[postReactionsLegendBad]]</title>
-                                            <g transform="matrix(1.25,0,0,-1.25,0,47.5)">
-                                                <g>
-                                                    <g clip-path="url(#clipPath16)">
-                                                        <g transform="translate(36,19)">
-                                                            <path style="fill:#ffcc4d;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="m 0,0 c 0,-9.389 -7.611,-17 -17,-17 -9.389,0 -17,7.611 -17,17 0,9.389 7.611,17 17,17 C -7.611,17 0,9.389 0,0"/>
-                                                        </g>
-                                                        <g transform="translate(16,20)" id="g24">
-                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="m 0,0 c 0,-1.657 -0.895,-3 -2,-3 -1.104,0 -2,1.343 -2,3 0,1.657 0.896,3 2,3 1.105,0 2,-1.343 2,-3"/>
-                                                        </g>
-                                                        <g transform="translate(26,20)" id="g28">
-                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="m 0,0 c 0,-1.657 -0.895,-3 -2,-3 -1.104,0 -2,1.343 -2,3 0,1.657 0.896,3 2,3 1.105,0 2,-1.343 2,-3"/>
-                                                        </g>
-                                                        <g transform="translate(24.4854,8.1211)" id="g32">
-                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="m 0,0 c -0.012,0.044 -1.146,4.379 -5.485,4.379 -4.341,0 -5.475,-4.335 -5.485,-4.379 -0.053,-0.213 0.043,-0.431 0.231,-0.544 0.188,-0.112 0.433,-0.086 0.596,0.06 0.01,0.007 1.014,0.863 4.658,0.863 3.589,0 4.617,-0.83 4.656,-0.863 0.095,-0.09 0.219,-0.137 0.344,-0.137 0.084,0 0.169,0.021 0.246,0.064 C -0.043,-0.445 0.055,-0.218 0,0"/>
-                                                        </g>
-                                                        <g transform="translate(30,25)" id="g36">
-                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="m 0,0 c -5.554,0 -7.802,4.367 -7.895,4.553 -0.247,0.494 -0.046,1.095 0.448,1.342 0.493,0.246 1.092,0.047 1.34,-0.444 C -6.033,5.306 -4.287,2 0,2 0.553,2 1,1.552 1,1 1,0.448 0.553,0 0,0"/>
-                                                        </g>
-                                                        <g transform="translate(8,25)" id="g40">
-                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="M 0,0 C -0.552,0 -1,0.448 -1,1 -1,1.552 -0.552,2 0,2 5.083,2 5.996,5.12 6.033,5.253 6.178,5.781 6.725,6.101 7.252,5.962 7.782,5.823 8.103,5.289 7.97,4.757 7.921,4.563 6.704,0 0,0"/>
-                                                        </g>
-                                                    </g>
-                                                </g>
-                                            </g>
-                                        </svg>
+                                             src="https://images.noticeable.cloud/reactions/bad.svg"/>
 
-                                        <svg aria-labelledby="neutralReaction"
+                                        <img aria-labelledby="neutralReaction"
                                              id="neutralReaction"
                                              on-tap="_sendNeutralReaction"
-                                             role="img"
-                                             style="enable-background:new 0 0 47.5 47.5;"
-                                             version="1.1"
-                                             viewBox="0 0 47.5 47.5">
-                                            <title id="neutralReaction">[[postReactionsLegendNeutral]]</title>
-                                            <g transform="matrix(1.25,0,0,-1.25,0,47.5)">
-                                                <g>
-                                                    <g clip-path="url(#clipPath16)">
-                                                        <g transform="translate(36,19)">
-                                                            <path style="fill:#ffcc4d;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="m 0,0 c 0,-9.389 -7.611,-17 -17,-17 -9.388,0 -17,7.611 -17,17 0,9.388 7.612,17 17,17 C -7.611,17 0,9.388 0,0"/>
-                                                        </g>
-                                                        <g transform="translate(15,20.5)" id="g24">
-                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="M 0,0 C 0,-1.934 -1.119,-3.5 -2.5,-3.5 -3.881,-3.5 -5,-1.934 -5,0 -5,1.933 -3.881,3.5 -2.5,3.5 -1.119,3.5 0,1.933 0,0"/>
-                                                        </g>
-                                                        <g transform="translate(28,20.5)" id="g28">
-                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="M 0,0 C 0,-1.934 -1.119,-3.5 -2.5,-3.5 -3.881,-3.5 -5,-1.934 -5,0 -5,1.933 -3.881,3.5 -2.5,3.5 -1.119,3.5 0,1.933 0,0"/>
-                                                        </g>
-                                                        <g transform="translate(26,11)" id="g32">
-                                                            <path style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="m 0,0 -14,0 c -0.552,0 -1,0.447 -1,1 0,0.553 0.448,1 1,1 L 0,2 C 0.553,2 1,1.553 1,1 1,0.447 0.553,0 0,0"/>
-                                                        </g>
-                                                    </g>
-                                                </g>
-                                            </g>
-                                        </svg>
+                                             src="https://images.noticeable.cloud/reactions/neutral.svg"/>
 
-                                        <svg aria-labelledby="goodReaction"
+                                        <img aria-labelledby="goodReaction"
                                              id="goodReaction"
                                              on-tap="_sendGoodReaction"
-                                             role="img"
-                                             style="enable-background:new 0 0 47.5 47.5;"
-                                             version="1.1"
-                                             viewBox="0 0 47.5 47.5">
-                                            <title id="goodReaction">[[postReactionsLegendGood]]</title>
-                                            <g transform="matrix(1.25,0,0,-1.25,0,47.5)">
-                                                <g>
-                                                    <g clip-path="url(#clipPath16)">
-                                                        <g transform="translate(36,19)">
-                                                            <path id="path22"
-                                                                  style="fill:#ffcc4d;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="m 0,0 c 0,-9.389 -7.611,-17 -17,-17 -9.388,0 -17,7.611 -17,17 0,9.388 7.612,17 17,17 C -7.611,17 0,9.388 0,0"/>
-                                                        </g>
-                                                        <g transform="translate(15,24.5)">
-                                                            <path id="path26"
-                                                                  style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="M 0,0 C 0,-2.486 -1.119,-5.5 -2.5,-5.5 -3.881,-5.5 -5,-2.486 -5,0 -5,2.485 -3.881,5.5 -2.5,5.5 -1.119,5.5 0,2.485 0,0"/>
-                                                        </g>
-                                                        <g transform="translate(28,24.5)">
-                                                            <path id="path30"
-                                                                  style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="M 0,0 C 0,-2.486 -1.119,-5.5 -2.5,-5.5 -3.881,-5.5 -5,-2.486 -5,0 -5,2.485 -3.881,5.5 -2.5,5.5 -1.119,5.5 0,2.485 0,0"/>
-                                                        </g>
-                                                        <g transform="translate(19,15)">
-                                                            <path id="path34"
-                                                                  style="fill:#664500;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="m 0,0 c -3.623,0 -6.027,0.422 -9,1 -0.679,0.131 -2,0 -2,-2 0,-4 4.595,-9 11,-9 6.404,0 11,5 11,9 C 11,1 9.679,1.132 9,1 6.027,0.422 3.623,0 0,0"/>
-                                                        </g>
-                                                        <g transform="translate(10,14)">
-                                                            <path id="path38"
-                                                                  style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
-                                                                  d="m 0,0 c 0,0 3,-1 9,-1 6,0 9,1 9,1 0,0 -2,-4 -9,-4 -7,0 -9,4 -9,4"/>
-                                                        </g>
-                                                    </g>
-                                                </g>
-                                            </g>
-                                        </svg>
+                                             src="https://images.noticeable.cloud/reactions/good.svg"/>
                                     </p>
                                 </div>
                             </template>
