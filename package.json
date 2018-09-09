@@ -7,18 +7,18 @@
     "url": "https://github.com/noticeableapp/noticeable-widget/issues"
   },
   "dependencies": {
-    "@polymer/iron-ajax": "^3.0.0-pre.21",
-    "@polymer/iron-dropdown": "^3.0.0-pre.21",
-    "@polymer/iron-iconset-svg": "^3.0.0-pre.21",
-    "@polymer/paper-icon-button": "^3.0.0-pre.21",
+    "@polymer/iron-ajax": "^3.0.0-pre.25",
+    "@polymer/iron-dropdown": "^3.0.0-pre.25",
+    "@polymer/iron-iconset-svg": "^3.0.0-pre.25",
+    "@polymer/paper-icon-button": "^3.0.0-pre.25",
     "@polymer/polymer": "^3.0.5",
     "js-sha3": "^0.8.0",
     "tinycolor2": "^1.4.1",
     "twemoji": "^11.0.1"
   },
   "devDependencies": {
-    "@polymer/iron-demo-helpers": "^3.0.0-pre.21",
-    "@webcomponents/webcomponentsjs": "^2.0.4"
+    "@polymer/iron-demo-helpers": "^3.0.1",
+    "@webcomponents/webcomponentsjs": "^2.1.1"
   },
   "license": "UNLICENSED",
   "name": "@noticeable/widgets",
