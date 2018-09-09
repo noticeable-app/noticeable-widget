@@ -366,6 +366,8 @@ class NoticeableWidgetPopup extends PolymerElement {
             }
 
             .post-content-value {
+                padding: 1px 16px;
+                
                 @apply --noticeable-widget-popup-post-content-value;
             }
 
@@ -2104,9 +2106,11 @@ class NoticeableWidgetPopup extends PolymerElement {
             setTimeout(() => {
                 const feedback = this._getLocalStorageItem('feedback:' + postId);
                 const reaction = this._getLocalStorageItem('reaction:' + postId);
+
                 if (reaction) {
                     this._selectReaction(reaction);
                 }
+
                 this._displayFeedbackForm = this._post.hiddenComments && !feedback;
                 this._displayFeedbackSentMessage = false;
                 this._displayPostContentFooter =
