@@ -2270,8 +2270,35 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             _sendFeedback(event) {
                 const postId = this._post.id;
 
-                this.$.feedbackPostAjax.body =
-                    'p=' + this.projectId + '&m=' + postId + '&c=' + this._feedbackComment;
+                let body = 'p=' + this.projectId + '&m=' + postId + '&c=' + this._feedbackComment;
+
+                let userData;
+
+                try {
+                    userData = JSON.parse(sessionStorage.getItem('noticeable:session'));
+                } catch(error) {
+                    userData = null;
+                }
+
+                if (userData) {
+                    if (userData.avatarUrl) {
+                        body += '&ua=' + userData.avatarUrl;
+                    }
+
+                    if (userData.email) {
+                        body += '&ue=' + userData.email;
+                    }
+
+                    if (userData.id) {
+                        body += '&ui=' + userData.id;
+                    }
+
+                    if (userData.name) {
+                        body += '&un=' + userData.name;
+                    }
+                }
+
+                this.$.feedbackPostAjax.body = body;
                 this.$.feedbackPostAjax.generateRequest();
 
                 this._setLocalStorageItem('feedback:' + postId, new Date());
