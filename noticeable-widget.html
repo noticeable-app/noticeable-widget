@@ -838,7 +838,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         <div class="post-header">
                             <div class="post-header-back">
                                 <paper-icon-button
-                                        alt="Back"
+                                        alt="[[postBackLink]]"
                                         icon="noticeable-widget:arrow-back"
                                         on-tap="_showPosts"></paper-icon-button>
                             </div>
@@ -855,7 +855,8 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
 
                             <template is="dom-if" if="[[_post.reactions]]">
                                 <div class="post-content-reactions">
-                                    <p class="post-content-reactions-title" hidden="[[!postReactionsTitle]]">[[postReactionsTitle]]</p>
+                                    <p class="post-content-reactions-title" hidden="[[!postReactionsTitle]]">
+                                        [[postReactionsTitle]]</p>
                                     <p>
                                         <svg aria-labelledby="badReaction"
                                              id="badReaction"
@@ -1310,20 +1311,30 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         value: undefined,
                     },
                     /**
+                     * The text associated with button to move back to the post list from a post.
+                     */
+                    postBackLink: {
+                        type: String,
+                        value: undefined
+                    },
+                    /**
                      * The text to display at the bottom of a post content.
                      * If not empty, clicking on the text opens the post on the timeline.
                      * If empty, then nothing appears.
-                     *
-                     * The default value is _empty_.
                      */
                     postContentFooter: {
                         type: String,
                         value: undefined
                     },
                     /**
+                     * The label associated with the button used to send feedback.
+                     */
+                    postFeedbackSendButtonLabel: {
+                        type: String,
+                        value: undefined
+                    },
+                    /**
                      * The text to display above the feedback textarea form.
-                     *
-                     * The default value is _empty_.
                      */
                     postFeedbackTextareaPlaceholder: {
                         type: String,
@@ -1331,8 +1342,6 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     },
                     /**
                      * The text to display once the feedback form is submitted.
-                     *
-                     * The default value is _empty_.
                      */
                     postFeedbackSentMessage: {
                         type: String,
@@ -1340,8 +1349,6 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     },
                     /**
                      * The text to display above the emojis reaction icons.
-                     *
-                     * The default value is _empty_.
                      */
                     postReactionsTitle: {
                         type: String,
@@ -1349,8 +1356,6 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     },
                     /**
                      * The text associated with the 'bad' emoji reaction.
-                     *
-                     * The default value is _empty_.
                      */
                     postReactionsLegendBad: {
                         type: String,
@@ -1358,8 +1363,6 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     },
                     /**
                      * The text associated with the 'neutral' emoji reaction.
-                     *
-                     * The default value is _empty_.
                      */
                     postReactionsLegendNeutral: {
                         type: String,
@@ -1367,8 +1370,6 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     },
                     /**
                      * The text associated with the 'good' emoji reaction.
-                     *
-                     * The default value is _empty_.
                      */
                     postReactionsLegendGood: {
                         type: String,
@@ -2018,6 +2019,16 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     (settings => settings.texts.postViewMoreButton), 'View more'
                 );
 
+                this.postBackLink = this._selectPropertyValue(
+                    this.postBackLink, remoteWidgetSettings,
+                    (settings => settings.texts.postBackLink), 'Back'
+                );
+
+                this.postFeedbackSendButtonLabel = this._selectPropertyValue(
+                    this.postFeedbackSendButtonLabel, remoteWidgetSettings,
+                    (settings => settings.texts.postFeedbackSendButtonLabel), 'Send'
+                );
+
                 this.postFeedbackTextareaPlaceholder = this._selectPropertyValue(
                     this.postFeedbackTextareaPlaceholder, remoteWidgetSettings,
                     (settings => settings.texts.postFeedbackTextareaPlaceholder), 'Send us your feedback.'
@@ -2107,7 +2118,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     }
 
                     const params = {
-                        query: "{ project(id:\"" + this.projectId + "\") { accentColor posts(before: \"now\" isDraft: false last:9 " + segments + ") { edges { node { content { html } excerpt hiddenComments id labels { color name } publicationTime reactions slug title } } } timeline { customDomain { name verified } } widget { autoRefresh closeOnEscKey closeOnOutsideClick fetchLimit markAsSeenAfter opened popup { allowOutsideScroll footer header horizontalAlign horizontalOffset useDynamicAlign verticalAlign verticalOffset withBackdrop } postExcerptMaxLength postExcerptTarget texts { postFeedbackTextareaPlaceholder postFeedbackSentMessage postReactionsTitle postReactionsLegendBad postReactionsLegendNeutral postReactionsLegendGood postViewMoreButton } trigger { displayAfter displayCounter useEyeCatching useSoftHide } useWhiteLabel } } }"
+                        query: "{ project(id:\"" + this.projectId + "\") { accentColor posts(before: \"now\" isDraft: false last:9 " + segments + ") { edges { node { content { html } excerpt hiddenComments id labels { color name } publicationTime reactions slug title } } } timeline { customDomain { name verified } } widget { autoRefresh closeOnEscKey closeOnOutsideClick fetchLimit markAsSeenAfter opened popup { allowOutsideScroll footer header horizontalAlign horizontalOffset useDynamicAlign verticalAlign verticalOffset withBackdrop } postExcerptMaxLength postExcerptTarget texts { postBackLink postFeedbackSendButtonLabel postFeedbackSentMessage postFeedbackTextareaPlaceholder postReactionsTitle postReactionsLegendBad postReactionsLegendNeutral postReactionsLegendGood postViewMoreButton } trigger { displayAfter displayCounter useEyeCatching useSoftHide } useWhiteLabel } } }"
                     };
 
                     if (this.noCache) {
@@ -2276,7 +2287,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
 
                 try {
                     userData = JSON.parse(sessionStorage.getItem('noticeable:session'));
-                } catch(error) {
+                } catch (error) {
                     userData = null;
                 }
 
