@@ -144,7 +144,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 }
             }
 
-            .labels {
+            .popup-entry-labels {
                 display: inline-flex;
                 margin-right: 4px;
 
@@ -240,7 +240,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 @apply --noticeable-widget-popup-entry-read-hover;
             }
 
-            .popup-entry .title {
+            .popup-entry-title {
                 font-weight: bold;
                 margin-right: 2px;
                 word-wrap: break-word;
@@ -248,7 +248,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 @apply --noticeable-widget-popup-entry-title;
             }
 
-            .popup-entry .excerpt {
+            .popup-entry-excerpt {
                 color: #666;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -807,14 +807,14 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                             <template is="dom-repeat" items="[[_postData]]">
                                 <div class$="popup-entry [[_getPostReadClass(item.id)]]" id$="[[item.id]]"
                                      on-click="_openPost">
-                                    <div class="labels">
+                                    <div class="popup-entry-labels">
                                         <template is="dom-repeat" items="[[item.labels]]" as="label">
                                             <noticeable-widget-label color="[[label.color]]"
                                                                      name="[[label.name]]"></noticeable-widget-label>
                                         </template>
                                     </div><!-- This comment prevents the insertion of a space upon formatting --><span
-                                        class="title" inner-h-t-m-l="[[item.title]]"></span>
-                                    <span class="excerpt"
+                                        class="popup-entry-title" inner-h-t-m-l="[[item.title]]"></span>
+                                    <span class="popup-entry-excerpt"
                                           inner-h-t-m-l="[[item.excerpt]]"></span>
                                 </div>
                             </template>
@@ -951,15 +951,15 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
          * --noticeable-widget-popup-container | Mixin applied to selector `#popup-container`.
          * --noticeable-widget-popup-container-for-phone | Mixin applied to selector `#popup-container` on small devices (phones).
          * --noticeable-widget-popup-content | Mixin applied to selector `.popup-content`.
-         * --noticeable-widget-popup-entry-labels | Mixin applied to selector `.labels`.
+         * --noticeable-widget-popup-entry-labels | Mixin applied to selector `.popup-entry-labels`.
          * --noticeable-widget-popup-entry | Mixin applied to selector `.popup-entry`.
-         * --noticeable-widget-popup-entry-excerpt | Mixin applied to selector `.popup-entry .excerpt`.
+         * --noticeable-widget-popup-entry-excerpt | Mixin applied to selector `.popup-entry-excerpt`.
          * --noticeable-widget-popup-entry-hover | Mixin applied to selector `.popup-entry:hover`.
          * --noticeable-widget-popup-entry-last-of-type | Mixin applied to selector `.popup-entry:last-of-type`.
          * --noticeable-widget-popup-entry-read | Mixin applied to selector `.popup-entry-read`.
          * --noticeable-widget-popup-entry-read-hover | Mixin applied to selector `.popup-entry-read:hover`.
          * --noticeable-widget-popup-entry-unread-border-color | Custom property used to alter the color of the left border set to unread posts. The default value is based on the project accent color.
-         * --noticeable-widget-popup-entry-title | Mixin applied to selector `.popup-entry .title`.
+         * --noticeable-widget-popup-entry-title | Mixin applied to selector `.popup-entry-title`.
          * --noticeable-widget-popup-footer | Mixin applied to selector `.popup-footer`.
          * --noticeable-widget-popup-footer-a | Mixin applied to selector `.popup-footer a`.
          * --noticeable-widget-popup-footer-a-hover | Mixin applied to selector `.popup-footer a:hover`.
