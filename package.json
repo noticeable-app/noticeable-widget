@@ -12,7 +12,7 @@
     "@polymer/iron-dropdown": "^3.0.1",
     "@polymer/iron-iconset-svg": "^3.0.1",
     "@polymer/paper-icon-button": "^3.0.1",
-    "@polymer/polymer": "3.0.5",
+    "@polymer/polymer": "^3.1.0",
     "js-sha3": "^0.8.0",
     "tinycolor2": "^1.4.1",
     "twemoji": "^11.2.0"
