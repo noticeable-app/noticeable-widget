@@ -2058,6 +2058,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             }
 
             _onPopupClosed() {
+                this._reloadIframes();
                 this.$['sliding-pages'].reset();
 
                 /**
@@ -2066,6 +2067,14 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                  * @event noticeable-widget-popup-closed
                  */
                 this.dispatchEvent(new CustomEvent('noticeable-widget-popup-closed', {bubbles: true, composed: true}));
+            }
+
+            _reloadIframes() {
+                const iframes = this.$['sliding-pages'].getElementsByTagName('iframe');
+
+                for (let i = 0; i < iframes.length; i++) {
+                    iframes[i].src = iframes[i].src;
+                }
             }
 
             _onSegmentsChange(segments) {
@@ -2259,6 +2268,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             }
 
             _showPosts() {
+                this._reloadIframes();
                 this.$['sliding-pages'].previous();
             }
 
