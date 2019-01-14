@@ -14,10 +14,10 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^2.6.0"
+    "polymer": "Polymer/polymer#^2.7.0"
   },
   "devDependencies": {
     "iron-component-page": "^3.0.1",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.2.4"
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.2.7"
   }
 }

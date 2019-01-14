@@ -8,7 +8,11 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-109155995-4"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
         gtag('js', new Date());
         gtag('config', 'UA-109155995-4');
     </script>
@@ -17,8 +21,8 @@
     <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
 
     <link rel="import" href="bower_components/iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="bower_components/noticeable-widget/noticeable-widget.html">
+    <link rel="import" href="bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
 
     <script type="text/javascript">
         this.addEventListener('noticeable-widget-ready', function (event) {
@@ -38,6 +42,32 @@
     <custom-style>
         <style is="custom-style" include="demo-pages-shared-styles">
 
+            .centered {
+                max-width: 600px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .vertical-section-container {
+                align-content: normal;
+                align-items: normal;
+                align-self: auto;
+                color: rgb(36, 41, 46);
+                display: flex;
+                flex-basis: auto;
+                flex-direction: column;
+                flex-wrap: nowrap;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+                font-size: 16px;
+                height: 5478.44px;
+                justify-content: normal;
+                line-height: 24px;
+                max-width: 600px;
+                text-rendering: optimizelegibility;
+                width: 600px;
+                -webkit-font-smoothing: antialiased;
+            }
+
             a {
                 color: inherit;
                 text-decoration: underline;
@@ -52,7 +82,8 @@
                 font-size: 16px !important;
                 color: #24292e;
                 line-height: 1.5;
-                margin-top: 16px;
+                margin-bottom: 48px;
+                margin-top: 32px;
                 text-rendering: optimizeLegibility;
                 -webkit-font-smoothing: antialiased;
             }
@@ -69,14 +100,14 @@
             }
 
             h1 p {
-                margin: 0;
+                margin: 24px 0 16px 0;
             }
 
             h2 {
                 color: #666;
                 font-size: 20px;
                 font-weight: 100;
-                margin-bottom: 28px;
+                margin-bottom: 48px;
                 margin-top: 0;
                 text-align: center;
             }
@@ -134,7 +165,8 @@
 <div class="vertical-section-container centered">
 
     <h1>
-        <a href="https://noticeable.io"><img height="64" src="https://images.noticeable.cloud/manifest/icon-72x72.png" width="64"></a>
+        <a href="https://noticeable.io"><img height="64" src="https://images.noticeable.cloud/manifest/icon-72x72.png"
+                                             width="64"></a>
         <p>Noticeable</p>
     </h1>
     <h2>Widget samples</h2>

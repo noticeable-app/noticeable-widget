@@ -16,10 +16,10 @@
   ],
   "dependencies": {
     "noticeable-widget": "noticeableapp/noticeable-widget#master",
-    "polymer": "Polymer/polymer#^2.6.0"
+    "polymer": "Polymer/polymer#^2.7.0"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.1.2",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.2.4"
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.2.7"
   }
 }

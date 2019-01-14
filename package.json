@@ -16,14 +16,14 @@
     "url": "https://github.com/noticeableapp/noticeable-widget.git"
   },
   "scripts": {
-    "clean": "rm -rf build/ public/v1/",
-    "prebuild": "yarn run clean && yarn run samples && yarn run doc",
+    "clean": "rm -rf bower_components build/ public/v1/",
     "build": "bower update && polymer build",
+    "postbuild": "yarn run samples && yarn run doc",
     "samples": "cd samples && yarn build",
     "doc-analysis": "rm -rf doc/analysis.json && polymer analyze --input noticeable-widget.html > doc/analysis.json",
     "doc": "yarn run doc-analysis && cd doc && yarn run build",
     "package": "yarn run build && mkdir -p public/v1/{samples,doc} && touch public/index.html && touch public/404.html && cp -r build/es5-bundled/* public/v1/ && mv public/v1/bower_components public/v1/libs && mkdir -p public/v1/libs/noticeable-widget && mv public/v1/*.html public/v1/libs/noticeable-widget && cp post-samples.json public/v1/libs/noticeable-widget && cp -r samples/build/es5-bundled/* public/v1/samples && cp -r doc/build/es5-bundled/* public/v1/doc && uglifyjs noticeable-widget.js --mangle --compress -o public/v1/noticeable-widget.js && uglifyjs noticeable-sdk.js --mangle --compress -o public/v1/noticeable-sdk.js",
-    "deploy": "yarn run package && firebase deploy"
+    "deploy": "yarn run package && firebase deploy && yarn run clean"
   },
   "version": "1.5.1"
 }
