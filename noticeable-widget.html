@@ -230,6 +230,14 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 @apply --noticeable-widget-popup-entry-last-of-type;
             }
 
+            .popup-entry-publication-time {
+                display: none;
+                font-size: 0.9em;
+                margin-bottom: 4px;
+
+                @apply --noticeable-widget-popup-entry-publication-time;
+            }
+
             .popup-entry-read {
                 border-left: 0 !important;
 
@@ -807,6 +815,8 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                             <template is="dom-repeat" items="[[_postData]]">
                                 <div class$="popup-entry [[_getPostReadClass(item.id)]]" id$="[[item.id]]"
                                      on-click="_openPost">
+                                    <div class="popup-entry-publication-time">[[_formatDate(item.publicationTime)]]
+                                    </div>
                                     <div class="popup-entry-labels">
                                         <template is="dom-repeat" items="[[item.labels]]" as="label">
                                             <noticeable-widget-label color="[[label.color]]"
@@ -959,6 +969,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
          * --noticeable-widget-popup-entry-read | Mixin applied to selector `.popup-entry-read`.
          * --noticeable-widget-popup-entry-read-hover | Mixin applied to selector `.popup-entry-read:hover`.
          * --noticeable-widget-popup-entry-unread-border-color | Custom property used to alter the color of the left border set to unread posts. The default value is based on the project accent color.
+         * --noticeable-widget-popup-entry-publication-time | Mixin applied to selector `.popup-entry-publication-time`.
          * --noticeable-widget-popup-entry-title | Mixin applied to selector `.popup-entry-title`.
          * --noticeable-widget-popup-footer | Mixin applied to selector `.popup-footer`.
          * --noticeable-widget-popup-footer-a | Mixin applied to selector `.popup-footer a`.
@@ -1295,6 +1306,14 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     postExcerptTarget: {
                         type: Object,
                         value: undefined
+                    },
+                    /**
+                     * Defines whether hours, minutes and seconds must be displayed when the
+                     * publication date is visible.
+                     */
+                    postPublicationDateNoTime: {
+                        type: Object,
+                        value: false
                     },
                     /**
                      * The project ID used to fetch data from the API.
@@ -1703,6 +1722,16 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         unSeenPostCount: this._unSeenPostCount
                     }
                 }));
+            }
+
+            _formatDate(dateString) {
+                const date = new Date(dateString);
+
+                if (this.postPublicationDateNoTime) {
+                    return date.toLocaleDateString();
+                }
+
+                return date.toLocaleString();
             }
 
             _handleDataError(event) {
