@@ -12,6 +12,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
 <link rel="import" href="noticeable-widget-icons.html">
 <link rel="import" href="noticeable-widget-label.html">
 <link rel="import" href="noticeable-widget-sliding-pages.html">
+<link rel="import" href="x-moment.html">
 <link rel="import" href="x-object-hash.html">
 <link rel="import" href="x-tinycolor.html">
 <link rel="import" href="x-twemoji.html">
@@ -1308,12 +1309,12 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         value: undefined
                     },
                     /**
-                     * Defines whether hours, minutes and seconds must be displayed when the
-                     * publication date is visible.
+                     * Defines the format to use for the publication datetime.
+                     * If the value is _undefined_, then relative time is used.
                      */
-                    postPublicationDateNoTime: {
+                    postPublicationDatetimeFormat: {
                         type: Object,
-                        value: false
+                        value: undefined
                     },
                     /**
                      * The project ID used to fetch data from the API.
@@ -1537,6 +1538,8 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     }
                 });
 
+                moment.locale(window.navigator.userLanguage || window.navigator.language);
+
                 /**
                  * Fired when the component is ready.
                  *
@@ -1725,13 +1728,13 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             }
 
             _formatDate(dateString) {
-                const date = new Date(dateString);
+                const date = moment(dateString);
 
-                if (this.postPublicationDateNoTime) {
-                    return date.toLocaleDateString();
+                if (this.postPublicationDatetimeFormat) {
+                    return date.format(this.postPublicationDatetimeFormat);
                 }
 
-                return date.toLocaleString();
+                return date.fromNow();
             }
 
             _handleDataError(event) {
