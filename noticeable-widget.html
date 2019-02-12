@@ -454,6 +454,37 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 font-weight: 500;
             }
 
+            .post-content-value img {
+                border-radius: 4px;
+                margin: 8px 0;
+
+                -moz-transition: all 0.3s;
+                -webkit-transition: all 0.3s;
+                transition: all 0.3s;
+            }
+
+            .post-content-value img.zoom {
+                cursor: zoom-in;
+                max-width: 100%;
+            }
+
+            .post-content-value img.zoom:hover {
+                border-radius: 4px;
+                opacity: .8;
+                -ms-transform: scale(1.25);
+                -webkit-transform: scale(1.25);
+                transform: rotate(-5deg) scale(1.25);
+            }
+
+            .post-content-value .img-container {
+                overflow: hidden;
+                position: relative;
+            }
+
+            .post-content-value svg {
+                display: block;
+            }
+
             .post-header {
                 border-bottom: 1px solid #e5e5e5;
                 font-weight: bold;
@@ -863,7 +894,8 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         </div>
 
                         <div class="post-content">
-                            <div class="post-content-value" inner-h-t-m-l="[[_post.content]]"></div>
+                            <div id="post-content-value" class="post-content-value"
+                                 inner-h-t-m-l="[[_post.content]]"></div>
 
                             <template is="dom-if" if="[[_post.reactions]]">
                                 <div class="post-content-reactions">
@@ -1540,6 +1572,63 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
 
                 moment.locale(window.navigator.userLanguage || window.navigator.language);
 
+                const lightboxStyles = window.document.createElement('style');
+                lightboxStyles.innerHTML = `
+                    #noticeable-lightbox img {
+                        border-radius: 4px;
+                        transition: 0.3s;
+                    }
+
+                    #noticeable-lightbox {
+                        background-color: rgb(0, 0, 0);
+                        background-color: rgba(0, 0, 0, 0.9);
+                        bottom: 0;
+                        cursor: zoom-out;
+                        display: none;
+                        flex-direction: column;
+                        left: 0;
+                        overflow: auto;
+                        position: fixed;
+                        right: 0;
+                        top: 0;
+                        z-index: 2147483647;
+                    }
+
+                    #noticeable-lightbox img {
+                        animation-name: zoom;
+                        animation-duration: 0.6s;
+                        display: block;
+                        margin: 0;
+                        max-width: none;
+                    }
+
+                    #noticeable-lightbox .caption {
+                        color: #ccc;
+                        display: block;
+                        margin-top: 24px;
+                        text-align: center;
+                    }
+
+                    #noticeable-lightbox .noticeable-lightbox-container {
+                        align-items: center;
+                        display: flex;
+                        flex-direction: column;
+                        height: 100%;
+                        justify-content: center;
+                    }
+
+                    @keyframes zoom {
+                        from {
+                            transform: scale(0.6)
+                        }
+                        to {
+                            transform: scale(1)
+                        }
+                    }
+                `;
+
+                window.document.head.appendChild(lightboxStyles);
+
                 /**
                  * Fired when the component is ready.
                  *
@@ -2081,6 +2170,12 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     this.$.widgetTriggerClickAjax.generateRequest();
                 }
 
+                const lightbox = document.createElement('div');
+                lightbox.innerHTML = '<div class="noticeable-lightbox-container"><img alt="" src="" /><div class="noticeable-lightbox-caption"></div></div>';
+                lightbox.setAttribute('id', 'noticeable-lightbox');
+
+                window.document.body.appendChild(lightbox);
+
                 /**
                  * Fired when the popup is opened.
                  *
@@ -2089,9 +2184,55 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 this.dispatchEvent(new CustomEvent('noticeable-widget-popup-opened', {bubbles: true, composed: true}));
             }
 
+            _openImagesInLightbox() {
+                var postContent = this.$['post-content-value'];
+                var images = postContent.getElementsByTagName('img');
+
+                var modal = window.document.getElementById('noticeable-lightbox');
+                var modalCaption = modal.getElementsByClassName('noticeable-lightbox-caption')[0];
+                var modalImg = modal.getElementsByTagName('img')[0];
+
+                modal.onclick = function (event) {
+                    modal.style.display = 'none';
+                    event.stopImmediatePropagation();
+                };
+
+                for (var i = 0; i < images.length; i++) {
+                    var img = images[i];
+                    img.parentElement.className = 'img-container';
+
+                    if (img.clientWidth < img.naturalWidth) {
+                        img.className = 'zoom';
+                        img.onclick = function (event) {
+                            var clickedImg = this.parentElement.getElementsByTagName('img')[0];
+                            modal.style.display = 'block';
+                            modalImg.src = clickedImg.src;
+
+                            if (clickedImg.alt.trim().length > 0) {
+                                modalCaption.innerHTML = clickedImg.alt;
+                                modalCaption.style.display = 'block';
+                                modalImg.alt = clickedImg.alt;
+                            } else {
+                                modalCaption.style.display = 'none';
+                            }
+
+                            event.stopImmediatePropagation();
+                        };
+                    } else {
+                        img.className = '';
+                    }
+                }
+            }
+
             _onPopupClosed() {
                 this._reloadIframes();
                 this.$['sliding-pages'].reset();
+
+                const lightbox = window.document.getElementById('noticeable-lightbox');
+
+                if (lightbox) {
+                    lightbox.parentElement.removeChild(lightbox);
+                }
 
                 /**
                  * Fired when the popup is closed.
@@ -2188,6 +2329,8 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         this._displayPostContentFooter =
                             this.postContentFooter && !this._post.hiddenComments && !this._post.reactions;
                         this._feedbackComment = '';
+
+                        this._openImagesInLightbox();
                     }, 0);
                 }
             }
