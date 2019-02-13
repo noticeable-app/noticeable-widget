@@ -2199,26 +2199,32 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     var img = images[i];
                     img.parentElement.className = 'img-container';
 
-                    if (img.clientWidth < img.naturalWidth) {
-                        img.className = 'zoom';
-                        img.onclick = function (event) {
-                            var clickedImg = this.parentElement.getElementsByTagName('img')[0];
-                            modal.style.display = 'block';
-                            modalImg.src = clickedImg.src;
+                    img.onload = function (event) {
+                        if (this.clientWidth < this.naturalWidth) {
+                            this.className = 'zoom';
 
-                            if (clickedImg.alt.trim().length > 0) {
-                                modalCaption.innerHTML = clickedImg.alt;
-                                modalCaption.style.display = 'block';
-                                modalImg.alt = clickedImg.alt;
-                            } else {
-                                modalCaption.style.display = 'none';
-                            }
+                            this.onclick = function (event) {
+                                var clickedImg = this.parentElement.getElementsByTagName('img')[0];
+                                modal.style.display = 'block';
+                                modalImg.src = clickedImg.src;
 
-                            event.stopImmediatePropagation();
-                        };
-                    } else {
-                        img.className = '';
-                    }
+                                if (clickedImg.alt.trim().length > 0) {
+                                    modalCaption.innerHTML = clickedImg.alt;
+                                    modalCaption.style.display = 'block';
+                                    modalImg.alt = clickedImg.alt;
+                                } else {
+                                    modalCaption.style.display = 'none';
+                                }
+
+                                event.stopImmediatePropagation();
+                            };
+                        } else {
+                            this.className = '';
+                        }
+                    };
+
+                    // force load event for browser cached images
+                    img.src = img.src;
                 }
             }
 
