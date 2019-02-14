@@ -12,7 +12,6 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
 <link rel="import" href="noticeable-widget-icons.html">
 <link rel="import" href="noticeable-widget-label.html">
 <link rel="import" href="noticeable-widget-sliding-pages.html">
-<link rel="import" href="x-moment.html">
 <link rel="import" href="x-object-hash.html">
 <link rel="import" href="x-tinycolor.html">
 <link rel="import" href="x-twemoji.html">
@@ -1815,13 +1814,38 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             }
 
             _formatDate(dateString) {
-                const date = moment(dateString);
+                const publicationDateTime = new Date(dateString);
 
                 if (this.postPublicationDatetimeFormat) {
-                    return date.format(this.postPublicationDatetimeFormat);
+                    return publicationDateTime.toLocaleDateString() + " " + publicationDateTime.toLocaleTimeString();
                 }
 
-                return date.fromNow();
+                return this._timeDifference(publicationDateTime);
+            }
+
+            _timeDifference(previous) {
+                const current = new Date();
+                const msPerMinute = 60 * 1000;
+                const msPerHour = msPerMinute * 60;
+                const msPerDay = msPerHour * 24;
+                const msPerMonth = msPerDay * 30;
+                const msPerYear = msPerDay * 365;
+
+                const elapsed = current - previous;
+
+                if (elapsed < msPerMinute) {
+                    return Math.round(elapsed / 1000) + ' seconds ago';
+                } else if (elapsed < msPerHour) {
+                    return Math.round(elapsed / msPerMinute) + ' minutes ago';
+                } else if (elapsed < msPerDay) {
+                    return Math.round(elapsed / msPerHour) + ' hours ago';
+                } else if (elapsed < msPerMonth) {
+                    return Math.round(elapsed / msPerDay) + ' days ago';
+                } else if (elapsed < msPerYear) {
+                    return Math.round(elapsed / msPerMonth) + ' months ago';
+                } else {
+                    return Math.round(elapsed / msPerYear) + ' years ago';
+                }
             }
 
             _handleDataError(event) {
