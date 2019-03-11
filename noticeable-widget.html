@@ -1146,6 +1146,16 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         value: undefined
                     },
                     /**
+                     * Define whether the widget must automatically adjust its height to
+                     * prevent a "jumping" effect when the trigger is set in a vertical container.
+                     *
+                     * The default value is _false_.
+                     */
+                    popupAdjustHeightAutomatically: {
+                        type: Boolean,
+                        value: undefined
+                    },
+                    /**
                      * Set to true to display a backdrop behind the popup when it is opened.
                      *
                      * Allowed values are _false_ or _true_. The default value is _false_.
@@ -1466,6 +1476,9 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     },
                     _newPostSeen: {
                         type: Array
+                    },
+                    _popupHeight: {
+                        type: Number
                     },
                     _post: {
                         type: Object
@@ -2204,6 +2217,8 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                  * @event noticeable-widget-popup-opened
                  */
                 this.dispatchEvent(new CustomEvent('noticeable-widget-popup-opened', {bubbles: true, composed: true}));
+
+                this._popupHeight = this.$.popup.offsetHeight;
             }
 
             _openImagesInLightbox() {
@@ -2307,6 +2322,10 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             }
 
             _openPost(event) {
+                if (this.popupAdjustHeightAutomatically) {
+                    this.$['popup'].style.height = `${this._popupHeight}px`;
+                }
+
                 const postId = event.currentTarget.id;
 
                 this._post = this._postDataMap[postId];
