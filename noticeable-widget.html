@@ -1125,6 +1125,24 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         value: undefined
                     },
                     /**
+                     * By default, posts are marked as seen as soon as the popup is opened.
+                     *
+                     * Once enabled, this option allows to delay the time at which posts are marked
+                     * as seen. For instance, setting its value to _5000_ means that posts are
+                     * marked as seen 5 seconds after the popup has been opened.
+                     *
+                     * As a side effect, this option delays subsequent actions such as hiding the badge
+                     * trigger if soft hide is disabled.
+                     *
+                     * A value lower than _0_ means the feature is disabled.
+                     *
+                     * The default value is _-1_.
+                     */
+                    markAsSeenDelay: {
+                        type: Number,
+                        value: undefined
+                    },
+                    /**
                      * When enabled, all widget requests go straight to Noticeable servers bypassing caching layers.
                      * This ensures data freshness at the cost of higher response times.
                      *
@@ -2002,6 +2020,11 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     (settings => settings.markAsSeenAfter), -1
                 );
 
+                this.markAsSeenDelay = this._selectPropertyValue(
+                    this.markAsSeenDelay, remoteWidgetSettings,
+                    (settings => settings.markAsSeenDelay), -1
+                );
+
                 this.opened = this._selectPropertyValue(
                     this.hasAttribute('opened') ? this.opened : this.$.popup.opened, remoteWidgetSettings,
                     (settings => settings.opened), false
@@ -2197,7 +2220,16 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             _onPopupOpened() {
                 if (this._newPostSeen) {
                     this._setLocalStorageItem('posts:seen', this._newPostSeen);
-                    this._unSeenPostCount = 0;
+
+                    if (this._unSeenPostCount > 0) {
+                        if (this.markAsSeenDelay > 0) {
+                            setTimeout(() => {
+                                this._unSeenPostCount = 0;
+                            }, this.markAsSeenDelay)
+                        } else {
+                            this._unSeenPostCount = 0;
+                        }
+                    }
                 }
 
                 if (!this._isDemonstrationModeEnabled()) {
