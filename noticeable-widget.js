@@ -3,9 +3,9 @@
     var head = d.head;
     var prefix = 'https://cdn.noticeable.io/v1/libs/';
 
-    function importWebcomponentsLoaderAndWidget() {
+    function importWebcomponentsLoaderAndWidget(loadPolyfill) {
         var webcomponentsLoaderScript = d.createElement('script');
-        webcomponentsLoaderScript.src = prefix + 'webcomponentsjs/webcomponents-loader.js';
+        webcomponentsLoaderScript.src = prefix + 'webcomponentsjs/' + (loadPolyfill ? 'webcomponents-lite' : 'webcomponents-loader') + '.js';
         webcomponentsLoaderScript.onload = function () {
             var noticeableWidgetLink = document.createElement('link');
             noticeableWidgetLink.rel = 'import';
@@ -39,11 +39,11 @@
         var customElementsAdapterScript = d.createElement('script');
         customElementsAdapterScript.src = prefix + 'webcomponentsjs/custom-elements-es5-adapter.js';
         customElementsAdapterScript.onload = function () {
-            importWebcomponentsLoaderAndWidget();
+            importWebcomponentsLoaderAndWidget(false);
         };
 
         head.insertBefore(customElementsAdapterScript, head.firstChild);
     } else {
-        importWebcomponentsLoaderAndWidget();
+        importWebcomponentsLoaderAndWidget(true);
     }
 })();
