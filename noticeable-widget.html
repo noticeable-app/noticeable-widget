@@ -81,6 +81,10 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 @apply --noticeable-widget-trigger;
             }
 
+            #trigger:hover {
+                @apply --noticeable-widget-trigger-hover;
+            }
+
             #trigger-badge {
                 display: inline-block;
                 margin: var(--noticeable-widget-trigger-badge-margin, auto);
@@ -1039,6 +1043,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
          * --noticeable-widget-spinner-background-color | Custom property controlling the background color of the spinner used when loading posts.
          * --noticeable-widget-spinner-foreground-color | Custom property controlling the foreground color of the spinner used when loading posts.
          * --noticeable-widget-trigger | Mixin applied to selector `#trigger`.
+         * --noticeable-widget-trigger-hover | Mixin applied to selector `#trigger:hover`.
          * --noticeable-widget-trigger-badge | Mixin applied to selector `#trigger-badge`.
          * --noticeable-widget-trigger-badge-counter | Mixin applied to selector `#trigger-badge-counter`.
          * --noticeable-widget-trigger-badge-disabled | Mixin applied to selector `.trigger-badge-disabled`.
