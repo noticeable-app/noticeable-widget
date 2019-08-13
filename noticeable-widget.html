@@ -1072,7 +1072,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                      * The access token used to fetch data from the API.
                      */
                     accessToken: {
-                        type: String,
+                        type: String
                     },
                     /**
                      * The API URL used for fetching widget data.
@@ -1249,7 +1249,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                      */
                     popupHorizontalOffset: {
                         type: Number,
-                        value: undefined,
+                        value: undefined
                     },
                     /**
                      * By default, the popup will constrain scrolling on the page to itself when opened.
@@ -1288,7 +1288,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                      */
                     popupVerticalOffset: {
                         type: Number,
-                        value: undefined,
+                        value: undefined
                     },
                     /**
                      * The text associated with button to move back to the post list from a post.
@@ -1375,7 +1375,9 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     },
                     /**
                      * Defines the format to use for the publication datetime.
-                     * If the value is _undefined_, then relative time is used.
+                     * If the value is _undefined_, then relative time is used. Otherwise, the property
+                     * accepts a function that receives the publication datetime (JavaScript date object) as input
+                     * and returns a String as output.
                      */
                     postPublicationDatetimeFormat: {
                         type: Object,
@@ -1476,7 +1478,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     },
                     _dataLoaded: {
                         type: Boolean,
-                        value: false,
+                        value: false
                     },
                     _displayFeedbackForm: {
                         type: Boolean
@@ -1485,7 +1487,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         type: Boolean
                     },
                     _displayPostContentFooter: {
-                        type: Boolean,
+                        type: Boolean
                     },
                     _feedbackComment: {
                         observer: '_onFeedbackCommentChange',
@@ -1508,10 +1510,10 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         type: Object
                     },
                     _postData: {
-                        type: Object,
+                        type: Object
                     },
                     _postDataMap: {
-                        type: Object,
+                        type: Object
                     },
                     _projectSettings: {
                         type: Object,
@@ -1528,7 +1530,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         observer: '_onUnSeenPostCountChange',
                         type: Number,
                         value: undefined
-                    },
+                    }
                 }
             }
 
@@ -1853,7 +1855,9 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             _formatDate(dateString) {
                 const publicationDateTime = new Date(dateString);
 
-                if (this.postPublicationDatetimeFormat) {
+                if ('function' === typeof this.postPublicationDatetimeFormat) {
+                    return this.postPublicationDatetimeFormat(publicationDateTime);
+                } else if (this.postPublicationDatetimeFormat !== undefined) {
                     return publicationDateTime.toLocaleDateString() + " " + publicationDateTime.toLocaleTimeString();
                 }
 
