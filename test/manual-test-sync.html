@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>Noticeable - Manual Test Sync</title>
+
+
+    <script src="https://dev.cdn.noticeable.io/v1/noticeable-sdk.js"></script>
+    <script>
+        Noticeable.user.set({
+            id: "213145153252332asqqw",
+            email: "john.doe@company.com",
+            name: "John Doe"
+        });
+    </script>
+
+    <script async defer src="https://dev.cdn.noticeable.io/v1/noticeable-widget.js"></script>
+
+    <custom-style>
+        <style type="text/css">
+            body {
+                font-family: 'Roboto', 'Noto', sans-serif;
+                font-size: 16px;
+                height: 5000px;
+            }
+
+            .center {
+                left: 50%;
+                position: absolute;
+                top: 50%;
+            }
+
+            a {
+                color: black;
+            }
+
+            noticeable-widget {
+                margin-left: 8px;
+
+                --noticeable-widget-trigger-badge: {
+                    margin-left: 8px;
+                };
+            }
+
+            noticeable-widget a:hover {
+                color: blue;
+            }
+        </style>
+    </custom-style>
+</head>
+<body>
+<script type="text/javascript">
+    document.addEventListener('noticeable-widget-ready', function (e) {
+        e.target.setSegments(['authenticated']);
+        var widgetElement = e.target;
+        widgetElement.injectCSS(
+            '@keyframes pulse {\n' +
+            '  0% {\n' +
+            '    box-shadow: 0 0 0 0 rgba(209, 14, 0, 0);\n' +
+            '  }\n' +
+            '  40% {\n' +
+            '    box-shadow: 0 0 0 5px rgba(209, 14, 0, 0.3);\n' +
+            '  }\n' +
+            '}');
+    });
+</script>
+<div class="center">
+    <div style="display: flex; align-items: center; align-content: center; align-self: center;">
+        <noticeable-widget
+                id="widget"
+                access-token="1FF4yGFwEejTMV4sGWYG" project-id="ZW6TLvP70GfMDgy9dHEX" sync><a href="#">What's new</a></noticeable-widget>
+    </div>
+</div>
+
+</body>
+</html>

@@ -793,6 +793,18 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 url="https://metrics.noticeable.io/reactions"></iron-ajax>
 
         <iron-ajax
+                id="widgetSyncGetAjax"
+                content-type="application/json"
+                on-response="_handleWidgetSyncGet"
+                handle-as="json"></iron-ajax>
+
+        <iron-ajax
+                id="widgetSyncPostAjax"
+                content-type="application/json"
+                handle-as="json"
+                method="POST"></iron-ajax>
+
+        <iron-ajax
                 id="widgetTriggerClickAjax"
                 content-type="application/x-www-form-urlencoded"
                 handle-as="text"
@@ -1409,6 +1421,15 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         value: false
                     },
                     /**
+                     * Enable cross-device state synchronization.
+                     *
+                     * This feature is available with the Business plan only.
+                     */
+                    sync: {
+                        type: Boolean,
+                        value: false
+                    },
+                    /**
                      * Defines whether the trigger must include the number of posts which have not yet been seen.
                      * This property makes sense only when the badge is visible.
                      *
@@ -1747,7 +1768,6 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     } else {
                         // no need for a map since iteration is done on at most 9 items
                         for (const index in postIdAlreadySeen) {
-
                             if (postIdAlreadySeen[index] === postId) {
                                 alreadySeen = true;
                                 break;
@@ -1969,9 +1989,32 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
 
                 const _isBadgeAlreadyVisible = this._unSeenPostCount !== undefined;
 
-                this._computeTriggerState(this._postData.reverse());
+                const noticeableSession = JSON.parse(sessionStorage.getItem('noticeable:session'));
+                const seenState = this._getLocalStorageItem('posts:seen');
+
+                if (this.sync && noticeableSession && noticeableSession.id && !seenState) {
+                    this.$.widgetSyncGetAjax.url =
+                        'https://sync.widget.noticeable.io/projects/' + this.projectId + '/states/' + noticeableSession.id;
+                    this.$.widgetSyncGetAjax.generateRequest();
+                } else {
+                    this._computeTriggerState(this._postData.reverse());
+                }
 
                 this._updateBadge(_isBadgeAlreadyVisible);
+            }
+
+            _handleWidgetSyncGet(event) {
+                const response = event.detail.response;
+
+                if (response.read) {
+                    this._setLocalStorageItem('posts:read', JSON.parse(response.read));
+                }
+
+                if (response.seen) {
+                    this._setLocalStorageItem('posts:seen', JSON.parse(response.seen));
+                }
+
+                this._computeTriggerState(this._postData.reverse());
             }
 
             _isDemonstrationModeEnabled() {
@@ -2227,9 +2270,22 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 }
             }
 
+            _updateSyncState(key, value) {
+                const noticeableSession = JSON.parse(sessionStorage.getItem('noticeable:session'));
+                if (this.sync && noticeableSession && noticeableSession.id) {
+                    this.$.widgetSyncPostAjax.url =
+                        'https://sync.widget.noticeable.io/projects/' + this.projectId + '/states/' + noticeableSession.id;
+                    this.$.widgetSyncPostAjax.body = {
+                        [key]: JSON.stringify(value)
+                    };
+                    this.$.widgetSyncPostAjax.generateRequest();
+                }
+            }
+
             _onPopupOpened() {
                 if (this._newPostSeen) {
                     this._setLocalStorageItem('posts:seen', this._newPostSeen);
+                    this._updateSyncState('seen', this._newPostSeen);
 
                     if (this._unSeenPostCount > 0) {
                         if (this.markAsSeenDelay > 0) {
@@ -2386,6 +2442,7 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     postRead.push(postId);
 
                     this._setLocalStorageItem('posts:read', postRead);
+                    this._updateSyncState('read', postRead);
 
                     const classList = event.currentTarget.classList;
                     classList.remove('popup-entry-read');
