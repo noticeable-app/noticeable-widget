@@ -1990,9 +1990,8 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 const _isBadgeAlreadyVisible = this._unSeenPostCount !== undefined;
 
                 const noticeableSession = JSON.parse(sessionStorage.getItem('noticeable:session'));
-                const seenState = this._getLocalStorageItem('posts:seen');
 
-                if (this.sync && noticeableSession && noticeableSession.id && !seenState) {
+                if (this.sync && noticeableSession && noticeableSession.id) {
                     this.$.widgetSyncGetAjax.url =
                         'https://sync.widget.noticeable.io/projects/' + this.projectId + '/states/' + noticeableSession.id;
                     this.$.widgetSyncGetAjax.generateRequest();
