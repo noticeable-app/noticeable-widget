@@ -880,11 +880,14 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         <template is="dom-if" if="[[popupFooter]]">
                             <div class="popup-footer">
                                 <div>
-                                    <a href="[[_timelineUrl]]/" target="noticeable-timeline"
+                                    <a href="[[_timelineUrl]]/"
+                                       ontouchstart="window.location = this.href;"
+                                       target="noticeable-timeline"
                                        title="[[popupFooter]]">[[popupFooter]]</a>
                                     <template is="dom-if" if="[[!whiteLabel]]">
                                         <span class="powered-by">
                                             powered by <a href="https://noticeable.io"
+                                                          ontouchstart="window.location = this.href;"
                                                           target="_blank"
                                                           title="Noticeable - Make your updates visible.">Noticeable</a>
                                         </span>
