@@ -773,10 +773,10 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
 
         <iron-ajax
                 id="feedbackPostAjax"
-                content-type="application/x-www-form-urlencoded"
-                handle-as="text"
+                content-type="application/json"
+                handle-as="json"
                 method="POST"
-                url="https://metrics.noticeable.io/feedback"></iron-ajax>
+                url="https://pipeline.noticeable.io/c"></iron-ajax>
 
         <iron-ajax
                 id="postSamplesAjax"
@@ -787,10 +787,10 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
 
         <iron-ajax
                 id="reactionsPostAjax"
-                content-type="application/x-www-form-urlencoded"
-                handle-as="text"
+                content-type="application/json"
+                handle-as="json"
                 method="POST"
-                url="https://metrics.noticeable.io/reactions"></iron-ajax>
+                url="https://pipeline.noticeable.io/r"></iron-ajax>
 
         <iron-ajax
                 id="widgetSyncGetAjax"
@@ -806,19 +806,19 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
 
         <iron-ajax
                 id="widgetTriggerClickAjax"
-                content-type="application/x-www-form-urlencoded"
-                handle-as="text"
+                content-type="application/json"
+                handle-as="json"
                 method="POST"
                 timeout="3000"
-                url="https://metrics.noticeable.io/clicks/widget/trigger"></iron-ajax>
+                url="https://pipeline.noticeable.io/m/wo"></iron-ajax>
 
         <iron-ajax
                 id="widgetViewPostAjax"
-                content-type="application/x-www-form-urlencoded"
-                handle-as="text"
+                content-type="application/json"
+                handle-as="json"
                 method="POST"
                 timeout="3000"
-                url="https://metrics.noticeable.io/views/widget/post"></iron-ajax>
+                url="https://pipeline.noticeable.io/m/wv"></iron-ajax>
 
         <div id="trigger"
              on-click="toggle"
@@ -2301,7 +2301,9 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 }
 
                 if (!this._isDemonstrationModeEnabled()) {
-                    this.$.widgetTriggerClickAjax.body = 'p=' + this.projectId;
+                    this.$.widgetTriggerClickAjax.body = JSON.stringify({
+                        p: this.projectId
+                    });
                     this.$.widgetTriggerClickAjax.generateRequest();
                 }
 
@@ -2457,7 +2459,10 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                         'noticeable-post');
                 } else {
                     if (!this._isDemonstrationModeEnabled()) {
-                        this.$.widgetViewPostAjax.body = 'p=' + this.projectId + '&m=' + postId;
+                        this.$.widgetViewPostAjax.body = JSON.stringify({
+                            p: this.projectId,
+                            pub: postId
+                        });
                         this.$.widgetViewPostAjax.generateRequest();
                     }
 
@@ -2516,8 +2521,6 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
             _sendFeedback(event) {
                 const postId = this._post.id;
 
-                let body = 'p=' + this.projectId + '&m=' + postId + '&c=' + this._feedbackComment;
-
                 let userData;
 
                 try {
@@ -2526,25 +2529,16 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                     userData = null;
                 }
 
-                if (userData) {
-                    if (userData.avatarUrl) {
-                        body += '&ua=' + userData.avatarUrl;
-                    }
-
-                    if (userData.email) {
-                        body += '&ue=' + userData.email;
-                    }
-
-                    if (userData.id) {
-                        body += '&ui=' + userData.id;
-                    }
-
-                    if (userData.name) {
-                        body += '&un=' + userData.name;
-                    }
-                }
-
-                this.$.feedbackPostAjax.body = body;
+                this.$.feedbackPostAjax.body = JSON.stringify({
+                    c: this._feedbackComment,
+                    p: this.projectId,
+                    pub: postId,
+                    ua: userData && userData.avatarUrl ? userData.avatarUrl : null,
+                    ue: userData && userData.email ? userData.email : null,
+                    u: userData && userData.id ? userData.id : null,
+                    un: userData && userData.name ? userData.name : null,
+                    v: null
+                });
                 this.$.feedbackPostAjax.generateRequest();
 
                 this._setLocalStorageItem('feedback:' + postId, new Date());
@@ -2572,7 +2566,17 @@ Copyright (c) 2017-2018 Noticeable. All rights reserved.
                 if (emojiButton && emojiButton.getAttribute('selected') !== 'true') {
                     const postId = this._post.id;
 
-                    this.$.reactionsPostAjax.body = 'p=' + this.projectId + '&m=' + postId + '&r=' + value;
+                    this.$.reactionsPostAjax.body = JSON.stringify({
+                        'p': this.projectId,
+                        'pr': null,
+                        'pub': postId,
+                        'r': value === 'bad' ? 'b' : value === 'good' ? 'g' : 'n',
+                        'ua': null,
+                        'ue': null,
+                        'u': null,
+                        'un': null,
+                        'v': null
+                    });
                     this.$.reactionsPostAjax.generateRequest();
 
                     this._setLocalStorageItem('reaction:' + postId, value);
